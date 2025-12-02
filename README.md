@@ -1,4 +1,4 @@
-# hh-toolkit-utils
+# everyday-helper
 
 A comprehensive collection of React hooks, utility functions, and helpers that'll make your development workflow smoother. This package brings together commonly needed utilities so you don't have to reinvent the wheel every time you start a new project.
 
@@ -9,9 +9,9 @@ Feel free to open issues or submit pull requests if you find bugs or have sugges
 ## Installation
 
 ```bash
-npm install hh-toolkit-utils
+npm install everyday-helper
 # or
-yarn add hh-toolkit-utils
+yarn add everyday-helper
 ```
 
 ## Peer Dependencies
@@ -44,7 +44,7 @@ This package is organized into four main sections:
 A wrapper around React Router's `useLocation` that provides convenient methods for working with the current route.
 
 ```tsx
-import { useAppLocation } from 'hh-toolkit-utils/hooks';
+import { useAppLocation } from 'everyday-helper/hooks';
 
 function NavBar() {
   const { pathname, isActive, includes, startsWith } = useAppLocation();
@@ -75,7 +75,7 @@ function NavBar() {
 Debounces a value, useful for search inputs or expensive operations.
 
 ```tsx
-import { useDebounce } from 'hh-toolkit-utils/hooks';
+import { useDebounce } from 'everyday-helper/hooks';
 
 function SearchBar() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -104,7 +104,7 @@ function SearchBar() {
 Provides a simple way to download images from URLs.
 
 ```tsx
-import { useDownloadFile } from 'hh-toolkit-utils/hooks';
+import { useDownloadFile } from 'everyday-helper/hooks';
 
 function ImageGallery() {
   const { downloadImage } = useDownloadFile();
@@ -126,7 +126,7 @@ function ImageGallery() {
 Execute a callback when the Escape key is pressed.
 
 ```tsx
-import { useEscapeKey } from 'hh-toolkit-utils/hooks';
+import { useEscapeKey } from 'everyday-helper/hooks';
 
 function Modal({ onClose }) {
   useEscapeKey({
@@ -152,7 +152,7 @@ function Modal({ onClose }) {
 Attach event listeners to window or document with automatic cleanup.
 
 ```tsx
-import { useEventListener } from 'hh-toolkit-utils/hooks';
+import { useEventListener } from 'everyday-helper/hooks';
 
 function Component() {
   useEventListener('scroll', () => {
@@ -178,7 +178,7 @@ function Component() {
 Track the user's online/offline status in real-time.
 
 ```tsx
-import { useOnlineStatus } from 'hh-toolkit-utils/hooks';
+import { useOnlineStatus } from 'everyday-helper/hooks';
 
 function ConnectionStatus() {
   const isOnline = useOnlineStatus();
@@ -198,7 +198,7 @@ function ConnectionStatus() {
 Detect clicks outside a specific element.
 
 ```tsx
-import { useOutsideClick } from 'hh-toolkit-utils/hooks';
+import { useOutsideClick } from 'everyday-helper/hooks';
 import { useRef } from 'react';
 
 function Dropdown() {
@@ -218,7 +218,7 @@ function Dropdown() {
 Create a portal container dynamically for modals, tooltips, etc.
 
 ```tsx
-import { usePortal } from 'hh-toolkit-utils/hooks';
+import { usePortal } from 'everyday-helper/hooks';
 import { createPortal } from 'react-dom';
 
 function Modal({ children }) {
@@ -241,7 +241,7 @@ function Modal({ children }) {
 Keep track of a value from the previous render.
 
 ```tsx
-import { usePrevious } from 'hh-toolkit-utils/hooks';
+import { usePrevious } from 'everyday-helper/hooks';
 
 function Counter() {
   const [count, setCount] = useState(0);
@@ -263,7 +263,7 @@ function Counter() {
 Print images with customizable styling in a new window or iframe.
 
 ```tsx
-import { usePrint } from 'hh-toolkit-utils/hooks';
+import { usePrint } from 'everyday-helper/hooks';
 
 function ImageViewer({ imageUrl }) {
   const { printInBlank, printInCurrent } = usePrint();
@@ -303,7 +303,7 @@ function ImageViewer({ imageUrl }) {
 Listen for window resize events with optional activation control.
 
 ```tsx
-import { useResizeListener } from 'hh-toolkit-utils/hooks';
+import { useResizeListener } from 'everyday-helper/hooks';
 
 function ResponsiveComponent() {
   const [width, setWidth] = useState(window.innerWidth);
@@ -323,7 +323,7 @@ function ResponsiveComponent() {
 Lock/unlock body scroll, perfect for modals and overlays.
 
 ```tsx
-import { useScrollLock } from 'hh-toolkit-utils/hooks';
+import { useScrollLock } from 'everyday-helper/hooks';
 
 function Modal({ isOpen }) {
   useScrollLock({ isLocked: isOpen });
@@ -339,7 +339,7 @@ function Modal({ isOpen }) {
 Simple toggle state management with helpful methods.
 
 ```tsx
-import { useToggle } from 'hh-toolkit-utils/hooks';
+import { useToggle } from 'everyday-helper/hooks';
 
 function Accordion() {
   const { isActive, toggle, onOpen, onClose } = useToggle();
@@ -380,7 +380,7 @@ import {
   shuffle,
   sortBy,
   partition,
-} from 'hh-toolkit-utils/utils';
+} from 'everyday-helper/utils';
 
 // Remove duplicates by key
 const users = uniqueBy(allUsers, 'id');
@@ -454,7 +454,7 @@ import {
   toPascalCase,
   toSnakeCase,
   toKebabCase,
-} from 'hh-toolkit-utils/utils';
+} from 'everyday-helper/utils';
 
 // Case transformations
 const camel = toCamelCase('hello-world'); // 'helloWorld'
@@ -515,7 +515,7 @@ import {
   deepMerge,
   cleanObject,
   mapValues,
-} from 'hh-toolkit-utils/utils';
+} from 'everyday-helper/utils';
 
 const user = {
   id: 1,
@@ -589,8 +589,8 @@ import {
   isFuture,
   addToDate,
   getDateDifference,
-} from 'hh-toolkit-utils/utils';
-import { DateFormats } from 'hh-toolkit-utils/constants';
+} from 'everyday-helper/utils';
+import { DateFormats } from 'everyday-helper/constants';
 
 // Format dates
 const formatted = formatDate(new Date(), DateFormats.DD_MM_YYYY_WITH_DOT);
@@ -645,7 +645,7 @@ const age = getAge('1990-01-01'); // Age in years
 Higher-order functions and function utilities.
 
 ```tsx
-import { debounce, throttle, memoize, once, retry } from 'hh-toolkit-utils/utils';
+import { debounce, throttle, memoize, once, retry } from 'everyday-helper/utils';
 
 // Debounce function calls
 const debouncedSearch = debounce((query) => {
@@ -710,7 +710,7 @@ const fetchData = retry(
 General-purpose utility functions.
 
 ```tsx
-import { isEmpty, isNotEmpty, isNulOrUndefined, getImageUrl } from 'hh-toolkit-utils/utils';
+import { isEmpty, isNotEmpty, isNulOrUndefined, getImageUrl } from 'everyday-helper/utils';
 
 // Check empty values
 if (isEmpty(value)) {
@@ -743,7 +743,7 @@ import {
   convertBase64ToFile,
   extractBase64FromDataUrl,
   fileToArrayBuffer,
-} from 'hh-toolkit-utils/utils';
+} from 'everyday-helper/utils';
 
 // File to Base64
 const base64 = await convertFileToBase64(file);
@@ -766,7 +766,7 @@ const buffer = await fileToArrayBuffer(file);
 API and HTTP-related utilities.
 
 ```tsx
-import { getEndpoint, generateQuery, isLoggedIn } from 'hh-toolkit-utils/utils';
+import { getEndpoint, generateQuery, isLoggedIn } from 'everyday-helper/utils';
 
 // Get role-based endpoints
 const endpoint = getEndpoint('admin', 'users', sharedFeatures);
@@ -797,7 +797,7 @@ import {
   hasAzerbaijanCountryCode,
   withAzerbaijanCountryCode,
   normalizePhone,
-} from 'hh-toolkit-utils/utils';
+} from 'everyday-helper/utils';
 
 // Check for country code
 const hascode = hasAzerbaijanCountryCode('0501234567'); // false
@@ -818,7 +818,7 @@ const normalized = normalizePhone('0501234567');
 CSS animation helper utilities.
 
 ```tsx
-import { animate, fadeIn, slideInUp, bounceIn } from 'hh-toolkit-utils/utils';
+import { animate, fadeIn, slideInUp, bounceIn } from 'everyday-helper/utils';
 
 function AnimatedComponent() {
   return (
@@ -868,7 +868,7 @@ import 'hh-toolkit/animations.css';
 Conditionally combine class names.
 
 ```tsx
-import cn from 'hh-toolkit-utils/lib';
+import cn from 'everyday-helper/lib';
 
 function Button({ isActive, isPrimary, className }) {
   return (
@@ -895,7 +895,7 @@ function Button({ isActive, isPrimary, className }) {
 Simple cookie management.
 
 ```tsx
-import { CookieManager } from 'hh-toolkit-utils/lib';
+import { CookieManager } from 'everyday-helper/lib';
 
 // Set cookie
 CookieManager.set('user_token', 'abc123', {
@@ -920,7 +920,7 @@ CookieManager.remove('user_token');
 Build FormData objects with ease.
 
 ```tsx
-import { createFormData } from 'hh-toolkit-utils/lib';
+import { createFormData } from 'everyday-helper/lib';
 
 const formData = createFormData()
   .append('name', 'John')
@@ -947,7 +947,7 @@ const formData2 = createFormData({
 Type-safe localStorage and sessionStorage wrappers.
 
 ```tsx
-import { local, session } from 'hh-toolkit-utils/lib';
+import { local, session } from 'everyday-helper/lib';
 
 // Local storage
 local.set('user', { id: 1, name: 'John' });
@@ -970,7 +970,7 @@ const allKeys = session.keys();
 Lazy load React components with retry logic.
 
 ```tsx
-import lazyLoad from 'hh-toolkit-utils/lib';
+import lazyLoad from 'everyday-helper/lib';
 
 const components = lazyLoad(
   {
@@ -1005,7 +1005,7 @@ function App() {
 Predefined date format strings for use with date utilities.
 
 ```tsx
-import { DateFormats } from 'hh-toolkit-utils/constants';
+import { DateFormats } from 'everyday-helper/constants';
 
 DateFormats.MMMM_DD_YYYY; // "MMMM DD, YYYY"
 DateFormats.DD_MM_YYYY_WITH_DOT; // "DD.MM.YYYY"
@@ -1023,7 +1023,7 @@ DateFormats.DD_MMM_YYYY_WITH_SPACE; // "DD MMM YYYY"
 Comprehensive enum of DOM event types.
 
 ```tsx
-import { EventTypes } from 'hh-toolkit-utils/constants';
+import { EventTypes } from 'everyday-helper/constants';
 
 // Mouse events
 EventTypes.CLICK;
@@ -1055,7 +1055,7 @@ EventTypes.LOAD;
 Sort order constants.
 
 ```tsx
-import { SortOrders } from 'hh-toolkit-utils/constants';
+import { SortOrders } from 'everyday-helper/constants';
 
 SortOrders.ASC; // 'asc'
 SortOrders.DESC; // 'desc'
@@ -1069,13 +1069,13 @@ You can import from specific paths for better tree-shaking:
 
 ```tsx
 // Import all from main entry
-import { useDebounce, formatDate, cn } from 'hh-toolkit-utils';
+import { useDebounce, formatDate, cn } from 'everyday-helper';
 
 // Or import from specific modules
-import { useDebounce } from 'hh-toolkit-utils/hooks';
-import { formatDate } from 'hh-toolkit-utils/utils';
-import { cn } from 'hh-toolkit-utils/lib';
-import { DateFormats } from 'hh-toolkit-utils/constants';
+import { useDebounce } from 'everyday-helper/hooks';
+import { formatDate } from 'everyday-helper/utils';
+import { cn } from 'everyday-helper/lib';
+import { DateFormats } from 'everyday-helper/constants';
 ```
 
 ---
@@ -1085,7 +1085,7 @@ import { DateFormats } from 'hh-toolkit-utils/constants';
 This package is written in TypeScript and includes full type definitions. You'll get autocomplete and type checking out of the box.
 
 ```tsx
-import { formatDate, pick } from 'hh-toolkit-utils';
+import { formatDate, pick } from 'everyday-helper';
 
 // Types are inferred automatically
 const date = formatDate(new Date()); // string | undefined
@@ -1099,8 +1099,8 @@ const user = pick({ name: 'John', age: 30 }, ['name']); // { name: string }
 ### Building a Search Component
 
 ```tsx
-import { useDebounce } from 'hh-toolkit-utils/hooks';
-import { isEmpty } from 'hh-toolkit-utils/utils';
+import { useDebounce } from 'everyday-helper/hooks';
+import { isEmpty } from 'everyday-helper/utils';
 import { useState, useEffect } from 'react';
 
 function SearchBar() {
@@ -1135,7 +1135,7 @@ function SearchBar() {
 ### Modal with Outside Click & Escape Key
 
 ```tsx
-import { useOutsideClick, useEscapeKey, useScrollLock } from 'hh-toolkit-utils/hooks';
+import { useOutsideClick, useEscapeKey, useScrollLock } from 'everyday-helper/hooks';
 import { useRef } from 'react';
 
 function Modal({ isOpen, onClose, children }) {
@@ -1160,8 +1160,8 @@ function Modal({ isOpen, onClose, children }) {
 ### Data Table with Sorting
 
 ```tsx
-import { sortBy, groupBy } from 'hh-toolkit-utils/utils';
-import { SortOrders } from 'hh-toolkit-utils/constants';
+import { sortBy, groupBy } from 'everyday-helper/utils';
+import { SortOrders } from 'everyday-helper/constants';
 import { useState } from 'react';
 
 function DataTable({ data }) {

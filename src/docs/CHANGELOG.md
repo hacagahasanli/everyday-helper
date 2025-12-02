@@ -5,26 +5,10 @@ All notable changes to this package are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)  
 and this project adheres to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
-## [Unreleased] 
-
-### [1.0.5] - 2025-12-02
-- Removing extra import based on sub folders, and keeping only index.ts for resolving auto suggestions on vs code
-
-### [1.0.4] - 2025-12-02
-- Replaced all _global.ts files to index.ts
-
-### [1.0.3] - 2025-12-02
-- Fixed TypeScript "cannot find module or its type declaration" errors by properly configuring `tsup` build process
-- Added named exports to all hooks and library functions for better IDE autocomplete and IntelliSense support
-
-### [1.0.2] - 2025-12-02
-- Type issues on importing the utils
-
-### [1.0.1] - 2025-12-02
-- Package Json Repo Urls
+## [Unreleased]
 
 ### [1.0.0] - 2025-12-01
-- Initial release of hh-toolkit-utils
+- Initial release of everyday-helper
 - React Hooks (13 hooks):
   - `useAppLocation` - React Router location utilities
   - `useDebounce` - Debounce values
