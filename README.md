@@ -2,6 +2,10 @@
 
 A comprehensive collection of React hooks, utility functions, and helpers that'll make your development workflow smoother. This package brings together commonly needed utilities so you don't have to reinvent the wheel every time you start a new project.
 
+## Contributing
+
+Feel free to open issues or submit pull requests if you find bugs or have suggestions for improvements!
+
 ## Installation
 
 ```bash
@@ -56,6 +60,7 @@ function NavBar() {
 ```
 
 **Returns:**
+
 - `pathname` - Current pathname
 - `hash` - URL hash
 - `search` - URL search params
@@ -88,6 +93,7 @@ function SearchBar() {
 ```
 
 **Parameters:**
+
 - `value` - The value to debounce
 - `delay` - Delay in milliseconds (default: 500)
 
@@ -104,14 +110,13 @@ function ImageGallery() {
   const { downloadImage } = useDownloadFile();
 
   return (
-    <button onClick={() => downloadImage('/api/image.jpg', 'my-image')}>
-      Download Image
-    </button>
+    <button onClick={() => downloadImage('/api/image.jpg', 'my-image')}>Download Image</button>
   );
 }
 ```
 
 **Methods:**
+
 - `downloadImage(src, filename)` - Downloads image as PNG file
 
 ---
@@ -127,7 +132,7 @@ function Modal({ onClose }) {
   useEscapeKey({
     onEscape: onClose,
     enabled: true,
-    preventDefault: true
+    preventDefault: true,
   });
 
   return <div className="modal">...</div>;
@@ -135,6 +140,7 @@ function Modal({ onClose }) {
 ```
 
 **Props:**
+
 - `onEscape` - Callback function to execute
 - `enabled` - Whether the hook is active (default: true)
 - `preventDefault` - Prevent default behavior (default: false)
@@ -160,6 +166,7 @@ function Component() {
 ```
 
 **Parameters:**
+
 - `event` - Event name
 - `handler` - Event handler function
 - `element` - Target element (default: window)
@@ -200,11 +207,7 @@ function Dropdown() {
 
   useOutsideClick(dropdownRef, () => setIsOpen(false));
 
-  return (
-    <div ref={dropdownRef}>
-      {/* Clicking outside closes the dropdown */}
-    </div>
-  );
+  return <div ref={dropdownRef}>{/* Clicking outside closes the dropdown */}</div>;
 }
 ```
 
@@ -228,6 +231,7 @@ function Modal({ children }) {
 ```
 
 **Options:**
+
 - `id` - Target element ID (if not provided, appends to body)
 
 ---
@@ -278,10 +282,12 @@ function ImageViewer({ imageUrl }) {
 ```
 
 **Methods:**
+
 - `printInBlank(src, style?)` - Opens print dialog in new window
 - `printInCurrent(src, style?)` - Prints using hidden iframe
 
 **Style Options:**
+
 - `padding` - Padding around image (default: '20px')
 - `fit` - Object-fit value (default: 'contain')
 - `maxWidth` - Maximum width (default: '100%')
@@ -350,6 +356,7 @@ function Accordion() {
 ```
 
 **Returns:**
+
 - `isActive` - Current state (boolean)
 - `toggle()` - Toggle the state
 - `onOpen()` - Set to true
@@ -372,7 +379,7 @@ import {
   last,
   shuffle,
   sortBy,
-  partition
+  partition,
 } from 'hh-toolkit-utils/utils';
 
 // Remove duplicates by key
@@ -401,6 +408,7 @@ const [active, inactive] = partition(users, (u) => u.isActive);
 ```
 
 **Available functions:**
+
 - `uniqueBy(arr, key)` - Unique elements by property
 - `groupBy(arr, key)` - Group by property
 - `chunk(arr, size)` - Split into chunks
@@ -445,7 +453,7 @@ import {
   toCamelCase,
   toPascalCase,
   toSnakeCase,
-  toKebabCase
+  toKebabCase,
 } from 'hh-toolkit-utils/utils';
 
 // Case transformations
@@ -466,6 +474,7 @@ const isEqual = eqIgnoreCase('Hello', 'hello'); // true
 ```
 
 **Available functions:**
+
 - `isStringSimilar(input, target, maxDiff)` - Fuzzy string matching
 - `concatIf(s1, s2, condition)` - Conditional concatenation
 - `isString(v)` - Type check
@@ -505,7 +514,7 @@ import {
   merge,
   deepMerge,
   cleanObject,
-  mapValues
+  mapValues,
 } from 'hh-toolkit-utils/utils';
 
 const user = {
@@ -513,7 +522,7 @@ const user = {
   name: 'John',
   email: 'john@example.com',
   role: 'admin',
-  metadata: { age: 30 }
+  metadata: { age: 30 },
 };
 
 // Pick specific keys
@@ -538,12 +547,11 @@ const cleaned = cleanObject({ name: 'John', email: '', age: null });
 // { name: 'John' }
 
 // Transform values
-const uppercased = mapValues(user, (val) =>
-  typeof val === 'string' ? val.toUpperCase() : val
-);
+const uppercased = mapValues(user, (val) => (typeof val === 'string' ? val.toUpperCase() : val));
 ```
 
 **Available functions:**
+
 - `pick(obj, keys)` - Select specific keys
 - `omit(obj, keys)` - Remove specific keys
 - `merge(target, source)` - Shallow merge
@@ -580,7 +588,7 @@ import {
   isYesterday,
   isFuture,
   addToDate,
-  getDateDifference
+  getDateDifference,
 } from 'hh-toolkit-utils/utils';
 import { DateFormats } from 'hh-toolkit-utils/constants';
 
@@ -610,6 +618,7 @@ const age = getAge('1990-01-01'); // Age in years
 ```
 
 **Available functions:**
+
 - `toDayjs(date)` - Convert to dayjs object
 - `formatDate(date, format)` - Format date
 - `formatRelativeTime(date, baseDate?)` - Relative time string
@@ -636,13 +645,7 @@ const age = getAge('1990-01-01'); // Age in years
 Higher-order functions and function utilities.
 
 ```tsx
-import {
-  debounce,
-  throttle,
-  memoize,
-  once,
-  retry
-} from 'hh-toolkit-utils/utils';
+import { debounce, throttle, memoize, once, retry } from 'hh-toolkit-utils/utils';
 
 // Debounce function calls
 const debouncedSearch = debounce((query) => {
@@ -666,14 +669,19 @@ const initialize = once(() => {
 });
 
 // Retry failed async operations
-const fetchData = retry(async () => {
-  const response = await fetch('/api/data');
-  if (!response.ok) throw new Error('Failed');
-  return response.json();
-}, 3, 1000); // 3 retries, 1s delay
+const fetchData = retry(
+  async () => {
+    const response = await fetch('/api/data');
+    if (!response.ok) throw new Error('Failed');
+    return response.json();
+  },
+  3,
+  1000,
+); // 3 retries, 1s delay
 ```
 
 **Available functions:**
+
 - `noop()` - No-op function
 - `compose(...fns)` - Function composition
 - `debounce(fn, wait)` - Debounce with cancel
@@ -702,12 +710,7 @@ const fetchData = retry(async () => {
 General-purpose utility functions.
 
 ```tsx
-import {
-  isEmpty,
-  isNotEmpty,
-  isNulOrUndefined,
-  getImageUrl
-} from 'hh-toolkit-utils/utils';
+import { isEmpty, isNotEmpty, isNulOrUndefined, getImageUrl } from 'hh-toolkit-utils/utils';
 
 // Check empty values
 if (isEmpty(value)) {
@@ -739,7 +742,7 @@ import {
   convertFileToBase64,
   convertBase64ToFile,
   extractBase64FromDataUrl,
-  fileToArrayBuffer
+  fileToArrayBuffer,
 } from 'hh-toolkit-utils/utils';
 
 // File to Base64
@@ -747,11 +750,7 @@ const base64 = await convertFileToBase64(file);
 // 'data:image/png;base64,iVBORw0KG...'
 
 // Base64 to File
-const file = convertBase64ToFile(
-  base64String,
-  'image.png',
-  'image/png'
-);
+const file = convertBase64ToFile(base64String, 'image.png', 'image/png');
 
 // Extract Base64 from data URL
 const pureBase64 = extractBase64FromDataUrl(dataUrl);
@@ -767,11 +766,7 @@ const buffer = await fileToArrayBuffer(file);
 API and HTTP-related utilities.
 
 ```tsx
-import {
-  getEndpoint,
-  generateQuery,
-  isLoggedIn
-} from 'hh-toolkit-utils/utils';
+import { getEndpoint, generateQuery, isLoggedIn } from 'hh-toolkit-utils/utils';
 
 // Get role-based endpoints
 const endpoint = getEndpoint('admin', 'users', sharedFeatures);
@@ -781,7 +776,7 @@ const query = generateQuery({
   page: 1,
   search: 'john',
   filters: ['active', 'verified'],
-  empty: ''
+  empty: '',
 });
 // 'page=1&search=john&filters=active&filters=verified'
 
@@ -801,7 +796,7 @@ Azerbaijan phone number utilities.
 import {
   hasAzerbaijanCountryCode,
   withAzerbaijanCountryCode,
-  normalizePhone
+  normalizePhone,
 } from 'hh-toolkit-utils/utils';
 
 // Check for country code
@@ -823,12 +818,7 @@ const normalized = normalizePhone('0501234567');
 CSS animation helper utilities.
 
 ```tsx
-import {
-  animate,
-  fadeIn,
-  slideInUp,
-  bounceIn
-} from 'hh-toolkit-utils/utils';
+import { animate, fadeIn, slideInUp, bounceIn } from 'hh-toolkit-utils/utils';
 
 function AnimatedComponent() {
   return (
@@ -838,12 +828,14 @@ function AnimatedComponent() {
       <div {...bounceIn(2)}>Bounces in third</div>
 
       {/* Custom animation */}
-      <div {...animate({
-        type: 'fade-in',
-        order: 3,
-        delay: 0.5,
-        className: 'extra-class'
-      })}>
+      <div
+        {...animate({
+          type: 'fade-in',
+          order: 3,
+          delay: 0.5,
+          className: 'extra-class',
+        })}
+      >
         Custom timing
       </div>
     </>
@@ -852,11 +844,13 @@ function AnimatedComponent() {
 ```
 
 **Note:** Import animations CSS once in your app:
+
 ```tsx
 import 'hh-toolkit/animations.css';
 ```
 
 **Available animations:**
+
 - `fadeIn(order?, className?, style?)`
 - `slideInUp(order?, className?, style?)`
 - `slideInDown(order?, className?, style?)`
@@ -883,9 +877,9 @@ function Button({ isActive, isPrimary, className }) {
         'btn',
         {
           active: isActive,
-          'btn-primary': isPrimary
+          'btn-primary': isPrimary,
         },
-        className
+        className,
       )}
     >
       Click me
@@ -909,7 +903,7 @@ CookieManager.set('user_token', 'abc123', {
   path: '/',
   expires: 7, // 7 days
   secure: true,
-  sameSite: 'Strict'
+  sameSite: 'Strict',
 });
 
 // Get cookie
@@ -940,7 +934,7 @@ const formData = createFormData()
 const formData2 = createFormData({
   skipNull: true,
   skipUndefined: true,
-  skipEmptyStrings: true
+  skipEmptyStrings: true,
 })
   .appendFields({ name: 'John', age: 30 })
   .build();
@@ -978,14 +972,17 @@ Lazy load React components with retry logic.
 ```tsx
 import lazyLoad from 'hh-toolkit-utils/lib';
 
-const components = lazyLoad({
-  HomePage: () => import('./pages/Home'),
-  AboutPage: () => import('./pages/About'),
-  Dashboard: () => import('./pages/Dashboard')
-}, {
-  retries: 2,
-  delayMs: 250
-});
+const components = lazyLoad(
+  {
+    HomePage: () => import('./pages/Home'),
+    AboutPage: () => import('./pages/About'),
+    Dashboard: () => import('./pages/Dashboard'),
+  },
+  {
+    retries: 2,
+    delayMs: 250,
+  },
+);
 
 function App() {
   return (
@@ -1010,13 +1007,13 @@ Predefined date format strings for use with date utilities.
 ```tsx
 import { DateFormats } from 'hh-toolkit-utils/constants';
 
-DateFormats.MMMM_DD_YYYY           // "MMMM DD, YYYY"
-DateFormats.DD_MM_YYYY_WITH_DOT    // "DD.MM.YYYY"
-DateFormats.DD_MM_YYYY_WITH_SLASH  // "DD/MM/YYYY"
-DateFormats.YYYY_MM_DD_WITH_HYPEN  // "YYYY-MM-DD"
-DateFormats.DD_MM_YYYY_WITH_HYPHEN // "DD-MM-YYYY"
-DateFormats.DD_MM_YYYY_HH_mm       // "DD/MM/YYYY HH:mm"
-DateFormats.DD_MMM_YYYY_WITH_SPACE // "DD MMM YYYY"
+DateFormats.MMMM_DD_YYYY; // "MMMM DD, YYYY"
+DateFormats.DD_MM_YYYY_WITH_DOT; // "DD.MM.YYYY"
+DateFormats.DD_MM_YYYY_WITH_SLASH; // "DD/MM/YYYY"
+DateFormats.YYYY_MM_DD_WITH_HYPEN; // "YYYY-MM-DD"
+DateFormats.DD_MM_YYYY_WITH_HYPHEN; // "DD-MM-YYYY"
+DateFormats.DD_MM_YYYY_HH_mm; // "DD/MM/YYYY HH:mm"
+DateFormats.DD_MMM_YYYY_WITH_SPACE; // "DD MMM YYYY"
 ```
 
 ---
@@ -1029,24 +1026,24 @@ Comprehensive enum of DOM event types.
 import { EventTypes } from 'hh-toolkit-utils/constants';
 
 // Mouse events
-EventTypes.CLICK
-EventTypes.MOUSE_MOVE
-EventTypes.MOUSE_ENTER
+EventTypes.CLICK;
+EventTypes.MOUSE_MOVE;
+EventTypes.MOUSE_ENTER;
 
 // Keyboard events
-EventTypes.KEY_DOWN
-EventTypes.ESCAPE
-EventTypes.ARROW_LEFT
+EventTypes.KEY_DOWN;
+EventTypes.ESCAPE;
+EventTypes.ARROW_LEFT;
 
 // Form events
-EventTypes.SUBMIT
-EventTypes.CHANGE
-EventTypes.FOCUS
+EventTypes.SUBMIT;
+EventTypes.CHANGE;
+EventTypes.FOCUS;
 
 // Window events
-EventTypes.RESIZE
-EventTypes.SCROLL
-EventTypes.LOAD
+EventTypes.RESIZE;
+EventTypes.SCROLL;
+EventTypes.LOAD;
 
 // And many more...
 ```
@@ -1060,8 +1057,8 @@ Sort order constants.
 ```tsx
 import { SortOrders } from 'hh-toolkit-utils/constants';
 
-SortOrders.ASC  // 'asc'
-SortOrders.DESC // 'desc'
+SortOrders.ASC; // 'asc'
+SortOrders.DESC; // 'desc'
 ```
 
 ---
@@ -1118,19 +1115,17 @@ function SearchBar() {
     }
 
     fetch(`/api/search?q=${debouncedQuery}`)
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(setResults);
   }, [debouncedQuery]);
 
   return (
     <div>
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search..."
-      />
+      <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search..." />
       <ul>
-        {results.map(item => <li key={item.id}>{item.name}</li>)}
+        {results.map((item) => (
+          <li key={item.id}>{item.name}</li>
+        ))}
       </ul>
     </div>
   );
@@ -1186,7 +1181,7 @@ function DataTable({ data }) {
         </tr>
       </thead>
       <tbody>
-        {sortedData.map(row => (
+        {sortedData.map((row) => (
           <tr key={row.id}>
             <td>{row.name}</td>
             <td>{row.age}</td>
@@ -1198,97 +1193,3 @@ function DataTable({ data }) {
   );
 }
 ```
-
----
-
-## Contributing
-
-Feel free to open issues or submit pull requests if you find bugs or have suggestions for improvements!
-
----
-
-## Versioning Guide
-
-This package follows **Semantic Versioning (SemVer)**:
-
-- **PATCH (`1.0.0 → 1.0.1`)** – Small fixes (bug fixes, typing improvements, documentation updates).
-- **MINOR (`1.0.0 → 1.1.0`)** – New features, hooks, or utilities added **without** breaking the existing API.
-- **MAJOR (`1.1.0 → 2.0.0`)** – Breaking changes (API changes, renamed exports, function signature updates, etc.).
-
-### Commands to Bump the Version
-
-#### PATCH bump (bug fix or non-breaking update)
-
-```sh
-npm version patch
-```
-
-This command:
-- Updates `package.json` version from `x.y.z → x.y.(z+1)`
-- Automatically creates a git commit and a git tag
-
-#### MINOR bump (new hook/utility, no breaking changes)
-
-```sh
-npm version minor
-```
-
-This command:
-- Updates `package.json` version from `x.y.z → x.(y+1).0`
-- Creates a git commit + tag
-
-#### MAJOR bump (breaking API change)
-
-```sh
-npm version major
-```
-
-This command:
-- Updates `package.json` version from `(x+1).0.0`
-- Creates a git commit + tag
-
-### Release & Publish Workflow
-
-Follow these steps to create a new release:
-
-1. **Make your code changes** - Add a new hook/utility or fix a bug.
-
-2. **Update `CHANGELOG.md`** under the [Unreleased] section:
-   ```markdown
-   ### Feature
-   - `useScrollLock` hook added
-   ### Fixed
-   - Fixed focus trap escape key handling
-   ```
-
-3. **Bump the version** according to the type of change:
-   - Bug fix → `npm version patch`
-   - New non-breaking feature → `npm version minor`
-   - Breaking change → `npm version major`
-
-4. **Publish the package**:
-   ```sh
-   npm publish --access public
-   ```
-
-5. **Finalize the changelog** - Move the content from `[Unreleased]` to the new version section and add the release date.
-
-### Version Bump Examples
-
-| Change                                           | Command                           | New Version   |
-|--------------------------------------------------|-----------------------------------|---------------|
-| Bug fix in `usePortal`                           | `npm version patch`               | 1.0.0 → 1.0.1 |
-| New hook added (useDisableScroll)                | `npm version minor`               | 1.0.0 → 1.1.0 |
-| `useFocusTrap` API changed (breaking)            | `npm version major`               | 1.1.0 → 2.0.0 |
-
-### Quick Reference
-
-- `PATCH` – Small fixes → `npm version patch`
-- `MINOR` – New, non-breaking features → `npm version minor`
-- `MAJOR` – Breaking changes → `npm version major`
-
----
-
-## License
-
-MIT
