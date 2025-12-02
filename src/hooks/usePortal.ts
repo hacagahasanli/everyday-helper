@@ -10,9 +10,7 @@ const usePortal = ({ id }: UsePortalOptions = {}) => {
   useEffect(() => {
     let parentElement: HTMLElement | null = null;
 
-    if (id) {
-      parentElement = document.getElementById(id);
-    }
+    if (id) parentElement = document.getElementById(id);
 
     const container = document.createElement('div');
     rootRef.current = container;
