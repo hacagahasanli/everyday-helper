@@ -80,13 +80,15 @@ Use the correct category (Added, Changed, Fixed, etc.)
 Follow the formatting already used in the file
 Keep descriptions short and clear
 
-```sh
 ## [Unreleased]
 
 ### Added
+```sh
 - `useLocalStorage` hook for persisting state in localStorage (#42)
+```
 
 ### Fixed
+```sh
 - Fixed race condition in `useDebounce` when value changes rapidly (#45)
 ```
 
