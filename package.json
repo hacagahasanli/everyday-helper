@@ -1,6 +1,6 @@
 {
   "name": "everyday-helper",
-  "version": "1.0.12",
+  "version": "1.0.19",
   "description": "A lightweight collection of React hooks, utility functions, and helpers for modern React development",
   "license": "MIT",
   "type": "module",
