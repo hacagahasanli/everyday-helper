@@ -19,7 +19,6 @@ This package is organized into four main sections:
 
 ## React Hooks
 
-
 ### usePortal
 
 Create a portal container dynamically for modals, tooltips, etc.
