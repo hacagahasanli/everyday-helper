@@ -6,6 +6,12 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 ## [Unreleased]
 
+## [1.1.18] - 2025-12-05
+
+### Added
+- date utils converted from dayjs to native.
+- dayjs dependency removed
+
 ## [1.0.18] - 2025-12-03
 
 ### Added
