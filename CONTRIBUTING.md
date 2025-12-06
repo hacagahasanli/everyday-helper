@@ -27,12 +27,13 @@ You may contribute:
 
 ### 🛠 How to Contribute
 
-1. Create a new branch from `main`.
-2. Add your hook/function/module following the existing structure.
-3. Update `CHANGELOG.md` using the correct category.
-4. Open a Pull Request.
-5. PRs must use **Squash and Merge**.
-6. After approval, your PR will be merged and automatically released through CI/CD.
+1. Fork the project
+2. Create a new branch from `main`.
+3. Add your hook/utils/lib following the existing structure.
+4. Update `CHANGELOG.md` using the correct category.
+5. Open a Pull Request.
+6. PRs must use **Squash and Merge**.
+7. After approval, your PR will be merged and automatically released through CI/CD.
 
 ### 📝 Commit Message Rules
 
