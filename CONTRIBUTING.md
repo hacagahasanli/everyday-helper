@@ -1,7 +1,7 @@
 
 ## 📥 Contributing Guide
 
-This package is open for contributions from teammates and friends.  
+This package is open for contributions from everyone.  
 If you want to add new hooks, utility functions, or improvements, please follow the rules below so we maintain a clean and stable toolkit.
 
 ### 🔧 What You Can Contribute
