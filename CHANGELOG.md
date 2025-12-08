@@ -6,6 +6,12 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 ## [Unreleased]
 
+
+## [1.1.20] - 2025-12-08
+
+### Added
+- 8 new React hooks including lifecycle, timer, and browser utilities
+
 ## [1.1.18] - 2025-12-05
 
 ### Added
