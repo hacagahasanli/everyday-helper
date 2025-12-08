@@ -1,3 +1,4 @@
+export * from './browser';
 export * from './api-utils';
 export * from './date-utils';
 export * from './phone-utils';
