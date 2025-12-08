@@ -6,8 +6,17 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 ## [Unreleased]
 
+## [1.3.0] - 2025-12-10
 
-## [1.1.20] - 2025-12-08
+### Changed
+- Removed `.cjs` build output to simplify package artifacts
+- Removed sourcemap generation from `tsup`
+- Cleaned and simplified build configuration
+
+### Performance
+- Reduced bundle size by removing duplicate CJS builds
+
+## [1.2.0] - 2025-12-08
 
 ### Added
 - 8 new React hooks including lifecycle, timer, and browser utilities
