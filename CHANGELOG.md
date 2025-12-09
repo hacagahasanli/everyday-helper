@@ -6,6 +6,11 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 ## [Unreleased]
 
+## [1.0.12] - 2025-12-02
+
+### Changed
+- Fix package.json config to make visual studio suggestion enabled
+
 ## [1.3.0] - 2025-12-10
 
 ### Changed
