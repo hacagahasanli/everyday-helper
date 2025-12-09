@@ -1,4 +1,8 @@
-export const useDownloadFile = () => {
+export const useDownloadFile = ({
+  errorMessage = 'Endirmə uğursuz oldu.',
+}: {
+  errorMessage: string;
+}) => {
   const downloadImage = async (src: string, filename: string) => {
     try {
       const response = await fetch(src);
@@ -12,7 +16,7 @@ export const useDownloadFile = () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch {
-      alert('Endirmə uğursuz oldu.');
+      alert(errorMessage);
     }
   };
 
