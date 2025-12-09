@@ -1,6 +1,6 @@
 {
   "name": "everyday-helper",
-  "version": "1.0.19",
+  "version": "1.2.2",
   "description": "A lightweight collection of React hooks, utility functions, and helpers for modern React development",
   "license": "MIT",
   "type": "module",
@@ -52,6 +52,7 @@
     "dev": "tsup --watch",
     "test": "vitest",
     "release": "semantic-release",
+    "prepublishOnly": "npm run build",
     "test:ui": "vitest --ui",
     "type-check": "tsc --noEmit",
     "test:watch": "vitest --watch",
