@@ -2,9 +2,9 @@
 
 This package follows **Semantic Versioning (SemVer)**:
 
-- **PATCH (`1.0.0 → 1.0.1`)** – Small fixes (bug fixes, typing improvements, documentation updates).
-- **MINOR (`1.0.0 → 1.1.0`)** – New features, hooks, or utilities added **without** breaking the existing API.
-- **MAJOR (`1.1.0 → 2.0.0`)** – Breaking changes (API changes, renamed exports, function signature updates, etc.).
+- PATCH (`1.0.0 → 1.0.1`)** – Small fixes (bug fixes, typing improvements, documentation updates).
+- MINOR (`1.0.0 → 1.1.0`)** – New features, hooks, or utilities added **without** breaking the existing API.
+- MAJOR (`1.1.0 → 2.0.0`)** – Breaking changes (API changes, renamed exports, function signature updates, etc.).
 
 ### Commands to Bump the Version
 

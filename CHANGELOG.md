@@ -6,12 +6,27 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 ## [Unreleased]
 
-## [1.0.12] - 2025-12-02
+## [1.2.4] - 2025-12-12
+
+### Changed
+- Making domain param of Cookie lib optional
+
+## [1.2.3] - 2025-12-10
 
 ### Changed
 - Fix package.json config to make visual studio suggestion enabled
 
-## [1.3.0] - 2025-12-10
+## [1.2.2] - 2025-12-10
+
+### Changed
+- Fix package.json config to make visual studio suggestion enabled
+
+## [1.2.2] - 2025-12-10
+
+### Changed
+- Fix package.json config to make visual studio suggestion enabled
+
+## [1.2.1] - 2025-12-10
 
 ### Changed
 - Removed `.cjs` build output to simplify package artifacts
@@ -26,7 +41,7 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 ### Added
 - 8 new React hooks including lifecycle, timer, and browser utilities
 
-## [1.1.18] - 2025-12-05
+## [1.1.19] - 2025-12-05
 
 ### Added
 - date utils converted from dayjs to native.
