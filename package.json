@@ -31,9 +31,9 @@
     "toolkit",
     "utilities"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./index.js",
+  "module": "./index.js",
+  "types": "./index.d.ts",
   "files": [
     "dist",
     "LICENSE",
@@ -41,8 +41,8 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./index.d.ts",
+      "import": "./index.js"
     },
     "./package.json": "./package.json"
   },
@@ -51,8 +51,6 @@
     "lint": "eslint .",
     "dev": "tsup --watch",
     "test": "vitest",
-    "release": "semantic-release",
-    "prepublishOnly": "npm run build",
     "test:ui": "vitest --ui",
     "type-check": "tsc --noEmit",
     "test:watch": "vitest --watch",

@@ -19,15 +19,18 @@ export default defineConfig({
       esModuleInterop: true,
     },
   },
-  clean: true,
+  clean: false,
   // sourcemap: true,
-  minify: false, // keep readable for internal use
-  outDir: 'dist',
-  splitting: false,
+  minify: true, // keep readable for internal use
+  outDir: '.',  
+  // Output to root  splitting: false,
   keepNames: true,
   treeshake: true,
+  esbuildOptions(options) {
+    options.outbase = 'src';  
+  },
   external: ['react', 'react-dom', 'react-router-dom'],
-  onSuccess: 'copyfiles -u 1 "src/styles/**/*.css" dist',
+  onSuccess: 'copyfiles -u 1 "src/styles/**/*.css" .',
   ignoreWatch: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', 'src/__tests__'],
   target: 'es2020',
 });
