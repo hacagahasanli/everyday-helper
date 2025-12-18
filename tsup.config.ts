@@ -10,18 +10,16 @@ export default defineConfig({
   ],
   format: ['esm'],
   dts: {
-    entry: 'src/index.ts',
-    resolve: true,
     compilerOptions: {
-      moduleResolution: 'node10',
       skipLibCheck: true,
-      allowSyntheticDefaultImports: true,
       esModuleInterop: true,
+      allowSyntheticDefaultImports: true,
+      types: [],
     },
   },
   clean: true,
   // sourcemap: true,
-  minify: false, // keep readable for internal use
+  minify: true, // keep readable for internal use
   outDir: 'dist',
   splitting: false,
   keepNames: true,

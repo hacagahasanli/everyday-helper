@@ -4689,7 +4689,7 @@ ts-interface-checker@^0.1.9:
 
 tsup@^8.5.1:
   version "8.5.1"
-  resolved "https://registry.npmjs.org/tsup/-/tsup-8.5.1.tgz"
+  resolved "https://registry.yarnpkg.com/tsup/-/tsup-8.5.1.tgz#a9c7a875b93344bdf70600dedd78e70f88ec9a65"
   integrity sha512-xtgkqwdhpKWr3tKPmCkvYmS9xnQK3m3XgxZHwSUjvfTjp7YfXe5tT3GgWi0F2N+ZSMsOeWeZFh7ZZFg5iPhing==
   dependencies:
     bundle-require "^5.1.0"
