@@ -10,27 +10,22 @@ export default defineConfig({
   ],
   format: ['esm'],
   dts: {
-    entry: 'src/index.ts',
-    resolve: true,
     compilerOptions: {
-      moduleResolution: 'node10',
       skipLibCheck: true,
-      allowSyntheticDefaultImports: true,
       esModuleInterop: true,
+      allowSyntheticDefaultImports: true,
+      types: [],
     },
   },
-  clean: false,
+  clean: true,
   // sourcemap: true,
   minify: true, // keep readable for internal use
-  outDir: '.',  
-  // Output to root  splitting: false,
+  outDir: 'dist',
+  splitting: false,
   keepNames: true,
   treeshake: true,
-  esbuildOptions(options) {
-    options.outbase = 'src';  
-  },
   external: ['react', 'react-dom', 'react-router-dom'],
-  onSuccess: 'copyfiles -u 1 "src/styles/**/*.css" .',
+  onSuccess: 'copyfiles -u 1 "src/styles/**/*.css" dist',
   ignoreWatch: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', 'src/__tests__'],
   target: 'es2020',
 });
