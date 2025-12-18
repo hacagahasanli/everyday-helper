@@ -6,6 +6,21 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 ## [Unreleased]
 
+## [1.2.7] - 2025-12-12
+
+### Changed
+- Test: Fixing next.js package usage issue
+
+## [1.2.6] - 2025-12-12
+
+### Changed
+- Dist folder does not builds works as expected
+
+## [1.2.5] - 2025-12-12
+
+### Changed
+- Type issue fixed
+
 ## [1.2.4] - 2025-12-12
 
 ### Changed
