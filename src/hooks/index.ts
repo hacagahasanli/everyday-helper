@@ -19,3 +19,4 @@ export * from './useUpdateEffect';
 export * from './useEventListener';
 export * from './useResizeListener';
 export * from './useCopyToClipboard';
+export * from './useKeyPress';
