@@ -9,7 +9,7 @@ export function useKeyPress(targetKey: string) {
     }, [targetKey]);
 
     const upHandler = useCallback((e: KeyboardEvent) => {
-        if (e.key === targetKey) setPressed(true);
+        if (e.key === targetKey) setPressed(false);
     }, [targetKey]);
 
     useEventListener('keydown', downHandler);
