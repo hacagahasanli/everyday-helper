@@ -6,9 +6,40 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 ## [Unreleased]
 
-## [1.3.0] - 2025-12-10
+## [1.3.0] - 2026-01-16
 
 ### Changed
+
+- Unique ID Generator: tinyId lib addedd
+
+## [1.2.4] - 2025-12-12
+
+### Changed
+
+- Making domain param of Cookie lib optional
+
+## [1.2.3] - 2025-12-10
+
+### Changed
+
+- Fix package.json config to make visual studio suggestion enabled
+
+## [1.2.2] - 2025-12-10
+
+### Changed
+
+- Fix package.json config to make visual studio suggestion enabled
+
+## [1.2.2] - 2025-12-10
+
+### Changed
+
+- Fix package.json config to make visual studio suggestion enabled
+
+## [1.2.1] - 2025-12-10
+
+### Changed
+
 - Removed `.cjs` build output to simplify package artifacts
 - Removed sourcemap generation from `tsup`
 - Cleaned and simplified build configuration
@@ -19,107 +50,128 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 ## [1.2.0] - 2025-12-08
 
 ### Added
+
 - 8 new React hooks including lifecycle, timer, and browser utilities
 
-## [1.1.18] - 2025-12-05
+## [1.1.19] - 2025-12-05
 
 ### Added
+
 - date utils converted from dayjs to native.
 - dayjs dependency removed
 
 ## [1.0.18] - 2025-12-03
 
 ### Added
+
 - test for automatic changelog.md changes
 
 ## [1.0.17] - 2025-12-03
 
 ### Added
+
 - test for automatic changelog.md changes
 
 ## [1.0.16] - 2025-12-03
 
 ### Added
+
 - test for automatic changelog.md changes
 
 ## [1.0.15] - 2025-12-03
 
 ### Added
+
 - test for automatic changelog.md changes
 
 ## [1.0.14] - 2025-12-03
 
 ### Added
+
 - test for automatic changelog.md changes
 
 ## [1.0.13] - 2025-12-03
 
 ### Added
+
 - publish.yml file for automatic deploy
 
 ## [1.0.12] - 2025-12-02
 
 ### Changed
+
 - Package improvements
 
 ## [1.0.11] - 2025-12-02
 
 ### Fixed
+
 - VSCode auto-suggestions configuration
 
 ## [1.0.10] - 2025-12-02
 
 ### Changed
+
 - TSup configuration updates
 
 ## [1.0.9] - 2025-12-02
 
 ### Fixed
+
 - Package.json fixes
 
 ## [1.0.8] - 2025-12-02
 
 ### Changed
+
 - Package.json improvements
 
 ## [1.0.7] - 2025-12-02
 
 ### Changed
+
 - Package.json updates
 
 ## [1.0.6] - 2025-12-02
 
 ### Fixed
+
 - Package.json fixes
 
 ## [1.0.5] - 2025-12-02
 
 ### Changed
+
 - Package.json configuration improvements
 
 ## [1.0.4] - 2025-12-02
 
 ### Fixed
+
 - Package.json fixes
 
 ## [1.0.3] - 2025-12-02
 
 ### Fixed
+
 - TSup configuration fixes
 
 ## [1.0.2] - 2025-12-02
 
 ### Changed
+
 - TSup build improvements
 
 ## [1.0.1] - 2025-12-01
 
 ### Changed
+
 - Package description updated
 
 ## [1.0.0] - 2025-12-01
 
 ### Added
+
 - Initial release of everyday-helper
 - React Hooks (13 hooks):
   - `useAppLocation` - React Router location utilities
@@ -153,6 +205,7 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
   - `createStorage` - localStorage/sessionStorage wrappers
   - `local` & `session` - Type-safe storage helpers
   - `lazyLoad` - Lazy load React components with retry logic
+  - `tinyId` - Unique ID Generator
 - Constants:
   - `DateFormats` - Predefined date format strings
   - `EventTypes` - Comprehensive DOM event types enum
