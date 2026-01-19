@@ -6,6 +6,12 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-01-19
+
+### Changed
+
+- DD_MM_YYYY_HH_mm format is fixed in formatDate function
+
 ## [1.3.0] - 2026-01-16
 
 ### Changed

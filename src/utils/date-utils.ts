@@ -10,7 +10,7 @@ const toDate = (date: DateInput): Date | undefined => {
   return isNaN(d.getTime()) ? undefined : d;
 };
 
-const pad = (n: number) => String(n).padStart(2, "0");
+const pad = (n: number) => String(n).padStart(2, '0');
 
 /* ----------------------------- formatDate() ----------------------------- */
 export const formatDate = (
@@ -20,29 +20,32 @@ export const formatDate = (
   const d = toDate(date);
   if (!d) return undefined;
 
-  const formatter = new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-
   if (format === DateFormats.DD_MMM_YYYY_WITH_SPACE) {
-    const str = formatter.format(d); // "05 Dec 2025"
-    return str.replace(",", "");
+    return new Intl.DateTimeFormat('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    })
+      .format(d)
+      .replace(',', '');
   }
 
-  // Manual formatting fallback
-  return format
-    .replace("YYYY", d.getFullYear().toString())
-    .replace("MM", pad(d.getMonth() + 1))
-    .replace("DD", pad(d.getDate()));
+  const tokens: Record<string, string> = {
+    YYYY: d.getFullYear().toString(),
+    MM: pad(d.getMonth() + 1),
+    DD: pad(d.getDate()),
+    HH: pad(d.getHours()),
+    mm: pad(d.getMinutes()),
+  };
+
+  return Object.entries(tokens).reduce(
+    (acc, [token, value]) => acc.replaceAll(token, value),
+    format,
+  );
 };
 
 /* ----------------------------- formatRelativeTime() ----------------------------- */
-export const formatRelativeTime = (
-  date: DateInput,
-  baseDate?: DateInput,
-): string | undefined => {
+export const formatRelativeTime = (date: DateInput, baseDate?: DateInput): string | undefined => {
   const d = toDate(date);
   const base = toDate(baseDate) ?? new Date();
   if (!d) return undefined;
@@ -50,16 +53,13 @@ export const formatRelativeTime = (
   const diff = d.getTime() - base.getTime();
   const abs = Math.abs(diff);
 
-  if (abs < 60000)
-    return diff < 0 ? "seconds ago" : "in seconds";
+  if (abs < 60000) return diff < 0 ? 'seconds ago' : 'in seconds';
 
   const minutes = Math.round(abs / 60000);
-  if (minutes < 60)
-    return diff < 0 ? `${minutes} minutes ago` : `in ${minutes} minutes`;
+  if (minutes < 60) return diff < 0 ? `${minutes} minutes ago` : `in ${minutes} minutes`;
 
   const hours = Math.round(abs / 3600000);
-  if (hours < 24)
-    return diff < 0 ? `${hours} hours ago` : `in ${hours} hours`;
+  if (hours < 24) return diff < 0 ? `${hours} hours ago` : `in ${hours} hours`;
 
   const days = Math.round(abs / 86400000);
   return diff < 0 ? `${days} days ago` : `in ${days} days`;
@@ -125,7 +125,7 @@ export const isBetweenDates = (
 export const getDateDifference = (
   date1: DateInput,
   date2: DateInput,
-  unit: "millisecond" | "second" | "minute" | "hour" | "day" = "day",
+  unit: 'millisecond' | 'second' | 'minute' | 'hour' | 'day' = 'day',
 ): number | undefined => {
   const d1 = toDate(date1);
   const d2 = toDate(date2);
@@ -134,11 +134,16 @@ export const getDateDifference = (
   const diff = d1.getTime() - d2.getTime();
 
   switch (unit) {
-    case "millisecond": return diff;
-    case "second": return diff / 1000;
-    case "minute": return diff / 60000;
-    case "hour": return diff / 3600000;
-    default: return diff / 86400000;
+    case 'millisecond':
+      return diff;
+    case 'second':
+      return diff / 1000;
+    case 'minute':
+      return diff / 60000;
+    case 'hour':
+      return diff / 3600000;
+    default:
+      return diff / 86400000;
   }
 };
 
@@ -146,16 +151,16 @@ export const getDateDifference = (
 export const addToDate = (
   date: DateInput,
   amount: number,
-  unit: "day" | "hour" | "minute" | "second" = "day",
+  unit: 'day' | 'hour' | 'minute' | 'second' = 'day',
 ): Date | undefined => {
   const d = toDate(date);
   if (!d) return undefined;
 
   const copy = new Date(d);
 
-  if (unit === "second") copy.setSeconds(copy.getSeconds() + amount);
-  else if (unit === "minute") copy.setMinutes(copy.getMinutes() + amount);
-  else if (unit === "hour") copy.setHours(copy.getHours() + amount);
+  if (unit === 'second') copy.setSeconds(copy.getSeconds() + amount);
+  else if (unit === 'minute') copy.setMinutes(copy.getMinutes() + amount);
+  else if (unit === 'hour') copy.setHours(copy.getHours() + amount);
   else copy.setDate(copy.getDate() + amount);
 
   return copy;
@@ -164,24 +169,24 @@ export const addToDate = (
 export const subtractFromDate = (
   date: DateInput,
   amount: number,
-  unit: "day" | "hour" | "minute" | "second" = "day",
+  unit: 'day' | 'hour' | 'minute' | 'second' = 'day',
 ): Date | undefined => addToDate(date, -amount, unit);
 
 /* ----------------------------- Start/End ----------------------------- */
 export const startOf = (
   date: DateInput,
-  unit: "day" | "month" | "year" = "day",
+  unit: 'day' | 'month' | 'year' = 'day',
 ): Date | undefined => {
   const d = toDate(date);
   if (!d) return undefined;
 
   const copy = new Date(d);
 
-  if (unit === "day") copy.setHours(0, 0, 0, 0);
-  else if (unit === "month") {
+  if (unit === 'day') copy.setHours(0, 0, 0, 0);
+  else if (unit === 'month') {
     copy.setDate(1);
     copy.setHours(0, 0, 0, 0);
-  } else if (unit === "year") {
+  } else if (unit === 'year') {
     copy.setMonth(0, 1);
     copy.setHours(0, 0, 0, 0);
   }
@@ -191,18 +196,18 @@ export const startOf = (
 
 export const endOf = (
   date: DateInput,
-  unit: "day" | "month" | "year" = "day",
+  unit: 'day' | 'month' | 'year' = 'day',
 ): Date | undefined => {
   const d = toDate(date);
   if (!d) return undefined;
 
   const copy = new Date(d);
 
-  if (unit === "day") copy.setHours(23, 59, 59, 999);
-  else if (unit === "month") {
+  if (unit === 'day') copy.setHours(23, 59, 59, 999);
+  else if (unit === 'month') {
     copy.setMonth(copy.getMonth() + 1, 0);
     copy.setHours(23, 59, 59, 999);
-  } else if (unit === "year") {
+  } else if (unit === 'year') {
     copy.setMonth(11, 31);
     copy.setHours(23, 59, 59, 999);
   }
@@ -238,8 +243,8 @@ export const getAge = (birthdate: DateInput): number | undefined => {
 
 /* ----------------------------- parseDate ----------------------------- */
 export const parseDate = (dateString: string, format: string): Date | undefined => {
-  if (format === "DD/MM/YYYY") {
-    const [dd, mm, yyyy] = dateString.split("/").map(Number);
+  if (format === 'DD/MM/YYYY') {
+    const [dd, mm, yyyy] = dateString.split('/').map(Number);
     return new Date(yyyy, mm - 1, dd);
   }
   return toDate(dateString);
@@ -260,10 +265,7 @@ export const toUnixTimestamp = (date: DateInput): number | undefined => {
 export const now = (): Date => new Date();
 
 /* ----------------------------- compareDates() ----------------------------- */
-export const compareDates = (
-  date1: DateInput,
-  date2: DateInput,
-): -1 | 0 | 1 | undefined => {
+export const compareDates = (date1: DateInput, date2: DateInput): -1 | 0 | 1 | undefined => {
   const d1 = toDate(date1);
   const d2 = toDate(date2);
   if (!d1 || !d2) return undefined;
