@@ -6,6 +6,18 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 ## [Unreleased]
 
+## [1.3.4] - 2026-02-11
+
+### Changed
+
+- useAppLocation hook removed
+
+## [1.3.3] - 2026-01-19
+
+### Changed
+
+- DD_MM_YYYY_HH_mm format is fixed in formatDate function
+
 ## [1.3.2] - 2026-01-19
 
 ### Changed
