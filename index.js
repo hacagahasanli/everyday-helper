@@ -640,24 +640,6 @@ function useWindowSize() {
   return windowSize;
 }
 
-// src/hooks/useAppLocation.ts
-import { useLocation } from "react-router-dom";
-var useAppLocation = () => {
-  const location = useLocation();
-  const { pathname, hash, search } = location ?? {};
-  const isActive = (path) => pathname === path;
-  const includes = (segment) => pathname.includes(segment);
-  const startsWith2 = (prefix) => pathname.startsWith(prefix);
-  return {
-    hash,
-    search,
-    isActive,
-    includes,
-    pathname,
-    startsWith: startsWith2
-  };
-};
-
 // src/hooks/useDownloadFile.ts
 var useDownloadFile = ({
   errorMessage = "Endirm\u0259 u\u011Fursuz oldu."
@@ -1863,7 +1845,6 @@ export {
   union,
   unique,
   uniqueBy,
-  useAppLocation,
   useDebounce,
   useDownloadFile,
   useEscapeKey,

@@ -59,7 +59,7 @@ declare const CookieManager: {
     remove: (name: string, options?: CookieOptions) => void;
 };
 
-declare const createStorage: (storage: Storage) => {
+declare const createStorage: (type: "local" | "session") => {
     /** Save any value (auto JSON.stringified) */
     set: <T>(key: string, value: T) => void;
     /** Get and parse value, with optional default */
@@ -236,15 +236,6 @@ interface WindowSize {
     height: number;
 }
 declare function useWindowSize(): WindowSize;
-
-declare const useAppLocation: () => {
-    hash: string;
-    search: string;
-    isActive: (path: string) => boolean;
-    includes: (segment: string) => boolean;
-    pathname: string;
-    startsWith: (prefix: string) => boolean;
-};
 
 declare const useDownloadFile: ({ errorMessage, }: {
     errorMessage: string;
@@ -1251,4 +1242,4 @@ declare const bounceIn: (order?: number, className?: string, style?: CSSProperti
     style: CSSProperties;
 };
 
-export { type ClassValue, CookieManager, DateFormats, type DateInput, FormDataBuilder, type PrintStyle, addAsteriskIf, addToDate, animate, areAllValuesComplete, average, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, compactArr, compactStr, compareDates, compose, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createFormData, createStorage, curry, debounce, deepClone, deepFreeze, deepMerge, delay, difference, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatDate, formatDateRange, formatRelativeTime, fromPairs, generateQuery, get, getAge, getDateDifference, getEndpoint, getImageUrl, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isBetweenDates, isBrowser, isEmpty, isEqual, isFuture, isLoggedIn, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseDate, partial, partition, pick, pushIf, rateLimit, reject, repeat, retry, reverse, reverseArr, safeCall, safeWindow, sample, sampleSize, scaleIn, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toISOString, toKebabCase, toPascalCase, toSnakeCase, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useAppLocation, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useKeyPress, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useToggle, useUnmount, useUpdateEffect, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
+export { type ClassValue, CookieManager, DateFormats, type DateInput, FormDataBuilder, type PrintStyle, addAsteriskIf, addToDate, animate, areAllValuesComplete, average, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, compactArr, compactStr, compareDates, compose, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createFormData, createStorage, curry, debounce, deepClone, deepFreeze, deepMerge, delay, difference, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatDate, formatDateRange, formatRelativeTime, fromPairs, generateQuery, get, getAge, getDateDifference, getEndpoint, getImageUrl, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isBetweenDates, isBrowser, isEmpty, isEqual, isFuture, isLoggedIn, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseDate, partial, partition, pick, pushIf, rateLimit, reject, repeat, retry, reverse, reverseArr, safeCall, safeWindow, sample, sampleSize, scaleIn, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toISOString, toKebabCase, toPascalCase, toSnakeCase, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useKeyPress, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useToggle, useUnmount, useUpdateEffect, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
