@@ -62,7 +62,7 @@ declare const CookieManager: {
 declare const createStorage: (type: "local" | "session") => {
     /** Save any value (auto JSON.stringified) */
     set: <T>(key: string, value: T) => void;
-    /** Get and parse value, with optional default */
+    /** Get and parse value */
     get: <T>(key: string) => T | null;
     /** Get with fallback default value */
     getOr: <T>(key: string, defaultValue: T) => T;
@@ -78,7 +78,7 @@ declare const createStorage: (type: "local" | "session") => {
 declare const local: {
     /** Save any value (auto JSON.stringified) */
     set: <T>(key: string, value: T) => void;
-    /** Get and parse value, with optional default */
+    /** Get and parse value */
     get: <T>(key: string) => T | null;
     /** Get with fallback default value */
     getOr: <T>(key: string, defaultValue: T) => T;
@@ -94,7 +94,7 @@ declare const local: {
 declare const session: {
     /** Save any value (auto JSON.stringified) */
     set: <T>(key: string, value: T) => void;
-    /** Get and parse value, with optional default */
+    /** Get and parse value */
     get: <T>(key: string) => T | null;
     /** Get with fallback default value */
     getOr: <T>(key: string, defaultValue: T) => T;

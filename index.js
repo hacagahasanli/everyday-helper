@@ -94,17 +94,34 @@ var CookieManager = {
 };
 
 // src/lib/storage.ts
-var createStorage = (storage) => ({
+var isBrowserEnv = typeof window !== "undefined";
+var getStorage = (type) => {
+  if (!isBrowserEnv) return null;
+  try {
+    const storage = type === "local" ? window.localStorage : window.sessionStorage;
+    const testKey = "__storage_test__";
+    storage.setItem(testKey, "1");
+    storage.removeItem(testKey);
+    return storage;
+  } catch {
+    return null;
+  }
+};
+var createStorage = (type) => ({
   /** Save any value (auto JSON.stringified) */
   set: (key, value) => {
+    const storage = getStorage(type);
+    if (!storage) return;
     try {
       storage.setItem(key, JSON.stringify(value));
     } catch (err) {
       console.error(`[Storage] Failed to set "${key}":`, err);
     }
   },
-  /** Get and parse value, with optional default */
+  /** Get and parse value */
   get: (key) => {
+    const storage = getStorage(type);
+    if (!storage) return null;
     try {
       const item = storage.getItem(key);
       if (item === null) return null;
@@ -116,6 +133,8 @@ var createStorage = (storage) => ({
   },
   /** Get with fallback default value */
   getOr: (key, defaultValue) => {
+    const storage = getStorage(type);
+    if (!storage) return defaultValue;
     const value = storage.getItem(key);
     if (value === null) return defaultValue;
     try {
@@ -126,23 +145,31 @@ var createStorage = (storage) => ({
   },
   /** Remove a key */
   remove: (key) => {
+    const storage = getStorage(type);
+    if (!storage) return;
     storage.removeItem(key);
   },
   /** Check if key exists */
   has: (key) => {
+    const storage = getStorage(type);
+    if (!storage) return false;
     return storage.getItem(key) !== null;
   },
   /** Clear all data in this storage */
   clear: () => {
+    const storage = getStorage(type);
+    if (!storage) return;
     storage.clear();
   },
   /** Get all keys */
   keys: () => {
+    const storage = getStorage(type);
+    if (!storage) return [];
     return Object.keys(storage);
   }
 });
-var local = createStorage(localStorage);
-var session = createStorage(sessionStorage);
+var local = createStorage("local");
+var session = createStorage("session");
 
 // src/lib/form-data.ts
 var FormDataBuilder = class {
