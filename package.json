@@ -60,17 +60,13 @@
   },
   "peerDependencies": {
     "react": ">=18",
-    "react-dom": ">=18",
-    "react-router-dom": ">=6.0.0"
+    "react-dom": ">=18"
   },
   "peerDependenciesMeta": {
     "react": {
       "optional": false
     },
     "react-dom": {
-      "optional": false
-    },
-    "react-router-dom": {
       "optional": false
     }
   },

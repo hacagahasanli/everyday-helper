@@ -181,7 +181,6 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 - Initial release of everyday-helper
 - React Hooks (13 hooks):
-  - `useAppLocation` - React Router location utilities
   - `useDebounce` - Debounce values
   - `useDownloadFile` - Download files utilities
   - `useEscapeKey` - Handle Escape key press
