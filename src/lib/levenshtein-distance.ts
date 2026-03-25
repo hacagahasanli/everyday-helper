@@ -1,4 +1,4 @@
-const levenshteinDistance = (a: string, b: string): number => {
+export const levenshteinDistance = (a: string, b: string): number => {
   const matrix: number[][] = Array(b.length + 1)
     .fill(0)
     .map(() => Array(a.length + 1).fill(0));
@@ -19,5 +19,3 @@ const levenshteinDistance = (a: string, b: string): number => {
 
   return matrix[b.length][a.length];
 };
-
-export default levenshteinDistance;

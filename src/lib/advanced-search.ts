@@ -1,5 +1,5 @@
-import levenshteinDistance from "./levenshtein-distance";
-import normalizeAzText from "./normalize-az-text";
+import { levenshteinDistance } from ".";
+import { normalizeAzText } from "../utils";
 
 export const enum SearchMode {
   DEEP = 'deep',
@@ -13,7 +13,7 @@ export interface SearchableOption {
   children?: SearchableOption[];
 }
 
-const advancedSearch = <T extends SearchableOption>(
+export const advancedSearch = <T extends SearchableOption>(
   options: T[],
   searchTerm: string,
   mode: SearchMode = SearchMode.DEEP,
@@ -178,5 +178,3 @@ const deepSearch = <T extends SearchableOption>(options: T[], searchTerm: string
 
   return scoredOptions.sort((a, b) => b.score - a.score).map((item) => item.option);
 };
-
-export default advancedSearch;
