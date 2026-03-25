@@ -360,3 +360,12 @@ export const slugify = (str: string): string => {
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "");
 };
+
+export function getInitials(name: string, limit = 2): string {
+  return name
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .slice(0, limit)
+    .toUpperCase();
+}

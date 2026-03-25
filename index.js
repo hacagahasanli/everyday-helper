@@ -11,6 +11,22 @@ function cn(...args) {
   }).join(" ");
 }
 
+// src/lib/tinyId.ts
+var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
+var tinyId = (size = 21) => {
+  let id = "";
+  const bytes = crypto.getRandomValues(new Uint8Array(size));
+  for (let i = 0; i < size; i++) {
+    id += alphabet[bytes[i] & 63];
+  }
+  return id;
+};
+var timeId = (size = 16) => {
+  const timestamp = Date.now().toString(36);
+  const randomPart = tinyId(size - timestamp.length);
+  return timestamp + randomPart;
+};
+
 // src/lib/cookie.ts
 var CookieManager = {
   /**
@@ -290,21 +306,13 @@ var lazyLoad = (componentMap, options = {}) => {
   return lazyComponents;
 };
 
-// src/lib/tinyId.ts
-var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
-var tinyId = (size = 21) => {
-  let id = "";
-  const bytes = crypto.getRandomValues(new Uint8Array(size));
-  for (let i = 0; i < size; i++) {
-    id += alphabet[bytes[i] & 63];
-  }
-  return id;
-};
-var timeId = (size = 16) => {
-  const timestamp = Date.now().toString(36);
-  const randomPart = tinyId(size - timestamp.length);
-  return timestamp + randomPart;
-};
+// src/lib/advanced-search.ts
+var SearchMode = /* @__PURE__ */ ((SearchMode2) => {
+  SearchMode2["DEEP"] = "deep";
+  SearchMode2["LIGHT"] = "light";
+  SearchMode2["NORMAL"] = "normal";
+  return SearchMode2;
+})(SearchMode || {});
 
 // src/hooks/usePrint.ts
 import { useCallback } from "react";
@@ -1490,6 +1498,9 @@ var repeat = (str, count2) => {
 var slugify = (str) => {
   return str.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
 };
+function getInitials(name, limit = 2) {
+  return name.split(" ").map((w) => w[0]).join("").slice(0, limit).toUpperCase();
+}
 
 // src/utils/convert-utils.ts
 var convertFileToBase64 = (file) => new Promise((resolve, reject2) => {
@@ -1724,6 +1735,7 @@ export {
   CookieManager,
   DateFormats,
   FormDataBuilder,
+  SearchMode,
   addAsteriskIf,
   addToDate,
   animate,
@@ -1779,6 +1791,7 @@ export {
   getDateDifference,
   getEndpoint,
   getImageUrl,
+  getInitials,
   groupBy,
   has,
   hasAzerbaijanCountryCode,
