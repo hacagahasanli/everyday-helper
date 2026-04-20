@@ -10,7 +10,6 @@ export * from './useEscapeKey';
 export * from './useScrollLock';
 export * from './useMediaQuery';
 export * from './useWindowSize';
-export * from './useAppLocation';
 export * from './useDownloadFile';
 export * from './useOnlineStatus';
 export * from './useOutsideClick';

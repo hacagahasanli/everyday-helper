@@ -68,6 +68,18 @@ const allKeys = session.keys();
 ```
 
 ---
+## tinyId - Unique ID Generator
+```tsx
+
+import { tinyId, timeId } from 'everyday-helper/lib';
+
+console.log('Random ID:', tinyId());           // "V1StGXR8_Z5jdHi6B-myT"
+console.log('Short ID:', tinyId(10));          // "aB3xK9pL2m"
+console.log('Time-based ID:', timeId());       // "m8k3x2aB3xK9pL"
+```
+---
+
+---
 
 ### cn - Class Name Utility
 

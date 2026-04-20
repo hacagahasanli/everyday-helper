@@ -360,3 +360,37 @@ export const slugify = (str: string): string => {
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "");
 };
+
+export function getInitials(name: string, limit = 2): string {
+  return name
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .slice(0, limit)
+    .toUpperCase();
+}
+
+ export const normalizeAzText = (text: string): string => {
+  const charMap: { [key: string]: string } = {
+    ə: "e",
+    Ə: "E",
+    ı: "i",
+    İ: "I",
+    ş: "s",
+    Ş: "S",
+    ç: "c",
+    Ç: "C",
+    ğ: "g",
+    Ğ: "G",
+    ü: "u",
+    Ü: "U",
+    ö: "o",
+    Ö: "O",
+  };
+
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[əıüşçğüöƏIŞÇĞÜÖ]/g, (match) => charMap[match] || match)
+    .toLowerCase();
+};

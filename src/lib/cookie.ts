@@ -3,7 +3,7 @@
  */
 interface CookieOptions {
   path?: string;
-  domain: string;
+  domain?: string;
   secure?: boolean;
   expires?: number | string | Date;
   sameSite?: "Strict" | "Lax" | "None";
