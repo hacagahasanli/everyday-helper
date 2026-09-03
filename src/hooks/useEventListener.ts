@@ -1,12 +1,17 @@
 import { useEffect } from 'react';
 
+import { safeWindow } from '../utils/browser';
+
 export function useEventListener<K extends keyof WindowEventMap>(
   event: K,
   handler: (event: WindowEventMap[K]) => void,
-  element: Window | Document = window,
+  element?: Window | Document,
 ) {
   useEffect(() => {
-    element.addEventListener(event, handler as EventListener);
-    return () => element.removeEventListener(event, handler as EventListener);
+    const target = element ?? safeWindow();
+    if (!target) return;
+
+    target.addEventListener(event, handler as EventListener);
+    return () => target.removeEventListener(event, handler as EventListener);
   }, [event, handler, element]);
 }

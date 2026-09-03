@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 
+import { safeDocument } from '../utils/browser';
+
 import EventTypes from '../constants/EventTypes';
 
 import { useEventListener } from './useEventListener';
@@ -30,5 +32,5 @@ export const useEscapeKey = ({
     [enabled, onEscape, preventDefault],
   );
 
-  useEventListener('keydown', handler, document);
+  useEventListener('keydown', handler, safeDocument());
 };
