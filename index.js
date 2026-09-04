@@ -2104,6 +2104,52 @@ function useWindowSize() {
   return windowSize;
 }
 
+// src/hooks/useUrlPagination.ts
+import { useCallback as useCallback4, useEffect as useEffect12, useState as useState6 } from "react";
+function readIntParam(searchParams, key, fallback) {
+  const raw = searchParams.get(key);
+  const parsed = raw === null ? NaN : Number(raw);
+  const value = Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+  return value;
+}
+function useUrlPagination({
+  pageParam = "page",
+  pageSizeParam = "pageSize",
+  initialPage = 1,
+  initialPageSize = 10
+} = {}) {
+  const readFromUrl = useCallback4(() => {
+    if (!isBrowser()) return [initialPage, initialPageSize];
+    const searchParams = new URLSearchParams(window.location.search);
+    return [
+      readIntParam(searchParams, pageParam, initialPage),
+      readIntParam(searchParams, pageSizeParam, initialPageSize)
+    ];
+  }, [pageParam, pageSizeParam, initialPage, initialPageSize]);
+  const [[page, pageSize], setPagination] = useState6(readFromUrl);
+  useEffect12(() => {
+    if (!isBrowser()) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set(pageParam, String(page));
+    url.searchParams.set(pageSizeParam, String(pageSize));
+    window.history.replaceState(window.history.state, "", url);
+  }, [page, pageSize, pageParam, pageSizeParam]);
+  const setPage = useCallback4((nextPage) => {
+    setPagination(([, currentPageSize]) => [Math.max(nextPage, 1), currentPageSize]);
+  }, []);
+  const setPageSize = useCallback4((nextPageSize) => {
+    setPagination(() => [1, Math.max(nextPageSize, 1)]);
+  }, []);
+  return {
+    page,
+    pageSize,
+    setPage,
+    setPageSize,
+    nextPage: () => setPage(page + 1),
+    prevPage: () => setPage(page - 1)
+  };
+}
+
 // src/hooks/useDownloadFile.ts
 var useDownloadFile = ({
   errorMessage = "Endirm\u0259 u\u011Fursuz oldu."
@@ -2153,9 +2199,9 @@ function subscribe(callback) {
 }
 
 // src/hooks/useOutsideClick.ts
-import { useCallback as useCallback4 } from "react";
+import { useCallback as useCallback5 } from "react";
 function useOutsideClick(ref, onClickOutside) {
-  const handler = useCallback4(
+  const handler = useCallback5(
     (event) => {
       if (!ref.current) return;
       if (!ref.current.contains(event.target)) {
@@ -2168,10 +2214,10 @@ function useOutsideClick(ref, onClickOutside) {
 }
 
 // src/hooks/useUpdateEffect.ts
-import { useEffect as useEffect12, useRef as useRef6 } from "react";
+import { useEffect as useEffect13, useRef as useRef6 } from "react";
 function useUpdateEffect(effect, deps) {
   const isFirstRender = useRef6(true);
-  useEffect12(() => {
+  useEffect13(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
@@ -2180,10 +2226,42 @@ function useUpdateEffect(effect, deps) {
   }, deps);
 }
 
+// src/hooks/useListPagination.ts
+import { useMemo as useMemo2, useState as useState7 } from "react";
+function useListPagination(items, { initialPage = 1, pageSize: initialPageSize = 10 } = {}) {
+  const [rawPage, setRawPage] = useState7(initialPage);
+  const [pageSize, setPageSizeState] = useState7(initialPageSize);
+  const pageCount = Math.max(1, Math.ceil(items.length / pageSize));
+  const page = Math.min(Math.max(rawPage, 1), pageCount);
+  const paginatedItems = useMemo2(() => {
+    const start = (page - 1) * pageSize;
+    return items.slice(start, start + pageSize);
+  }, [items, page, pageSize]);
+  function setPage(nextPage) {
+    setRawPage(Math.min(Math.max(nextPage, 1), pageCount));
+  }
+  function setPageSize(nextPageSize) {
+    setPageSizeState(Math.max(nextPageSize, 1));
+    setRawPage(1);
+  }
+  return {
+    paginatedItems,
+    page,
+    pageSize,
+    pageCount,
+    hasNextPage: page < pageCount,
+    hasPrevPage: page > 1,
+    setPage,
+    setPageSize,
+    nextPage: () => setPage(page + 1),
+    prevPage: () => setPage(page - 1)
+  };
+}
+
 // src/hooks/useResizeListener.ts
-import { useEffect as useEffect13 } from "react";
+import { useEffect as useEffect14 } from "react";
 var useResizeListener = (callback, active) => {
-  useEffect13(() => {
+  useEffect14(() => {
     if (active) {
       callback();
       window.addEventListener(EventTypes_default.RESIZE, callback);
@@ -2195,10 +2273,10 @@ var useResizeListener = (callback, active) => {
 };
 
 // src/hooks/useScrollThreshold.ts
-import { useState as useState6, useEffect as useEffect14 } from "react";
+import { useState as useState8, useEffect as useEffect15 } from "react";
 var useScrollThreshold = (threshold = 300) => {
-  const [isReached, setIsReached] = useState6(false);
-  useEffect14(() => {
+  const [isReached, setIsReached] = useState8(false);
+  useEffect15(() => {
     const handleScroll = (e) => {
       const target = e.target;
       if (target.scrollTop > threshold) {
@@ -2384,6 +2462,7 @@ export {
   useEscapeKey,
   useEventListener,
   useInterval,
+  useListPagination,
   useMediaQuery,
   useMount,
   useOnlineStatus,
@@ -2399,6 +2478,7 @@ export {
   useToggle,
   useUnmount,
   useUpdateEffect,
+  useUrlPagination,
   useWindowSize,
   values,
   withAzerbaijanCountryCode,

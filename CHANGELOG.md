@@ -4,7 +4,7 @@ All notable changes to this package are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)  
 and this project adheres to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
-## [Unreleased]
+## [1.3.13] - 2026-09-04
 
 ### Added
 
@@ -13,6 +13,8 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 ### Fixed
 
 - `useOutsideClick` and `useEscapeKey` no longer crash during SSR (they referenced `document` directly at render time instead of inside an effect). `useEventListener`'s `window` fallback is now resolved lazily inside its effect as well, so the fix covers every hook built on top of it. Public API is unchanged.
+
+-- sad but lost version logs
 
 ## [1.3.4] - 2026-02-11
 

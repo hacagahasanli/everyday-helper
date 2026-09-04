@@ -449,6 +449,22 @@ interface WindowSize {
 }
 declare function useWindowSize(): WindowSize;
 
+interface UseUrlPaginationOptions {
+    pageParam?: string;
+    pageSizeParam?: string;
+    initialPage?: number;
+    initialPageSize?: number;
+}
+interface UseUrlPaginationResult {
+    page: number;
+    pageSize: number;
+    setPage: (page: number) => void;
+    setPageSize: (pageSize: number) => void;
+    nextPage: () => void;
+    prevPage: () => void;
+}
+declare function useUrlPagination({ pageParam, pageSizeParam, initialPage, initialPageSize, }?: UseUrlPaginationOptions): UseUrlPaginationResult;
+
 declare const useDownloadFile: ({ errorMessage, }: {
     errorMessage: string;
 }) => {
@@ -462,6 +478,24 @@ declare function useOutsideClick(ref: RefObject<HTMLElement | null>, onClickOuts
 declare function useUpdateEffect(effect: EffectCallback, deps?: DependencyList): void;
 
 declare function useEventListener<K extends keyof WindowEventMap>(event: K, handler: (event: WindowEventMap[K]) => void, element?: Window | Document): void;
+
+interface UseListPaginationOptions {
+    initialPage?: number;
+    pageSize?: number;
+}
+interface UseListPaginationResult<T> {
+    paginatedItems: T[];
+    page: number;
+    pageSize: number;
+    pageCount: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+    setPage: (page: number) => void;
+    setPageSize: (pageSize: number) => void;
+    nextPage: () => void;
+    prevPage: () => void;
+}
+declare function useListPagination<T>(items: T[], { initialPage, pageSize: initialPageSize }?: UseListPaginationOptions): UseListPaginationResult<T>;
 
 declare const useResizeListener: (callback: () => void, active: boolean) => void;
 
@@ -1551,4 +1585,4 @@ declare const bounceIn: (order?: number, className?: string, style?: CSSProperti
     style: CSSProperties;
 };
 
-export { type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, FormDataBuilder, type FormatLang, type GenerateOrderedDateTextModel, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, compactArr, compactStr, compareDates, compose, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, debounce, deepClone, deepFreeze, deepMerge, delay, difference, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatDate, formatDateRange, formatRelativeTime, fromPairs, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getEndpoint, getImageUrl, getInitials, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isBetweenDates, isBrowser, isEmpty, isEqual, isFuture, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, pushIf, rateLimit, reject, removeServerCookie, repeat, retry, reverse, reverseArr, safeCall, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toISOString, toKebabCase, toPascalCase, toSnakeCase, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
+export { type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, FormDataBuilder, type FormatLang, type GenerateOrderedDateTextModel, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, type UseListPaginationOptions, type UseListPaginationResult, type UseUrlPaginationOptions, type UseUrlPaginationResult, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, compactArr, compactStr, compareDates, compose, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, debounce, deepClone, deepFreeze, deepMerge, delay, difference, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatDate, formatDateRange, formatRelativeTime, fromPairs, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getEndpoint, getImageUrl, getInitials, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isBetweenDates, isBrowser, isDocumentAvailable, isEmpty, isEqual, isFuture, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, pushIf, rateLimit, reject, removeServerCookie, repeat, retry, reverse, reverseArr, safeCall, safeDocument, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toISOString, toKebabCase, toPascalCase, toSnakeCase, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useListPagination, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useUrlPagination, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
