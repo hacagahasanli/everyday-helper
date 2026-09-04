@@ -131,6 +131,84 @@ const token = CookieManager.get('user_token');
 CookieManager.remove('user_token');
 ```
 
+`CookieManager` reads/writes `document.cookie`, so it's client-side only — it
+silently no-ops during SSR. For server-side cookie access (Next.js, Nuxt,
+SvelteKit, Express, etc.), use the framework-agnostic `server-cookie` helpers
+instead.
+
+---
+
+### Server-side cookies
+
+Framework-agnostic helpers for reading/writing cookies on the server. They
+work with a raw `Cookie` header string in and a plain options object /
+`Set-Cookie` header string out, so they have zero dependency on Next.js (or
+any other framework) — you wire them to whatever `req`/`res`/`event` your
+framework hands you.
+
+```tsx
+import { getServerCookie, serializeCookie } from 'everyday-helper';
+
+// Next.js Pages Router — getServerSideProps
+export async function getServerSideProps({ req, res }) {
+  const token = getServerCookie('user_token', req.headers.cookie);
+
+  res.setHeader('Set-Cookie', serializeCookie('user_token', 'abc123', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+  }));
+
+  return { props: { isLoggedIn: !!token } };
+}
+```
+
+`createAuthCookieOptions` centralizes the `secure`/`httpOnly`/`sameSite`/
+`maxAge` defaults for an auth token cookie so they're not re-typed (and
+drifted) at every call site — `maxAge` defaults to `DEFAULT_AUTH_COOKIE_MAX_AGE`
+(7 days) if omitted. Its shape matches the native cookie APIs of Next.js
+(`next/headers` `cookies().set()`, `NextResponse.cookies.set()`) directly, so
+it can be spread straight in — no adapter needed:
+
+```tsx
+// app/actions.ts — your own Next.js Server Action
+'use server';
+
+import { cookies } from 'next/headers';
+import { createAuthCookieOptions } from 'everyday-helper';
+
+export async function saveTokenInServer(value: string, name: string, maxAge?: number) {
+  const cookieStore = await cookies();
+  cookieStore.set(name, value, createAuthCookieOptions(maxAge));
+}
+```
+
+The same options object works for `serializeCookie` (Pages Router / Express)
+or a Nuxt/SvelteKit `setCookie`-style call — only the last line differs per
+framework.
+
+`createServerCookieManager` wraps your framework's cookie store (anything
+shaped like `next/headers` `cookies()` or SvelteKit's `event.cookies` — a
+`get`/`set`/`delete` trio) so it reads exactly like `CookieManager`:
+
+```tsx
+'use server';
+
+import { cookies } from 'next/headers';
+import { createServerCookieManager, createAuthCookieOptions } from 'everyday-helper';
+
+export async function saveTokenInServer(value: string, name: string, maxAge?: number) {
+  const ServerCookieManager = createServerCookieManager(await cookies());
+  ServerCookieManager.set(name, value, createAuthCookieOptions(maxAge));
+}
+
+export async function deleteTokenInServer(name: string) {
+  const ServerCookieManager = createServerCookieManager(await cookies());
+  ServerCookieManager.remove(name);
+}
+```
+
 ---
 
 ### lazyLoad
@@ -489,6 +567,88 @@ function Accordion() {
 - `toggle()` - Toggle the state
 - `onOpen()` - Set to true
 - `onClose()` - Set to false
+
+---
+
+### useListPagination
+
+Client-side pagination over an in-memory array — slices the array for you and clamps page/pageSize to valid bounds.
+
+```tsx
+import { useListPagination } from 'everyday-helper/hooks';
+
+function UserList({ users }) {
+  const { paginatedItems, page, pageCount, nextPage, prevPage, hasNextPage, hasPrevPage } =
+    useListPagination(users, { pageSize: 10 });
+
+  return (
+    <div>
+      {paginatedItems.map((user) => (
+        <UserRow key={user.id} user={user} />
+      ))}
+      <button onClick={prevPage} disabled={!hasPrevPage}>
+        Prev
+      </button>
+      <span>
+        {page} / {pageCount}
+      </span>
+      <button onClick={nextPage} disabled={!hasNextPage}>
+        Next
+      </button>
+    </div>
+  );
+}
+```
+
+**Options:**
+
+- `initialPage` - Starting page, 1-indexed (default: `1`)
+- `pageSize` - Items per page (default: `10`)
+
+**Returns:**
+
+- `paginatedItems` - The current page's slice of `items`
+- `page`, `pageSize`, `pageCount` - Current pagination state
+- `hasNextPage`, `hasPrevPage` - Booleans for disabling nav controls
+- `setPage(page)`, `setPageSize(pageSize)` - Update state directly (changing `pageSize` resets to page 1)
+- `nextPage()`, `prevPage()` - Convenience navigation
+
+---
+
+### useUrlPagination
+
+Pagination state synced to the URL's search params (via `history.replaceState`), so page/pageSize survive a refresh or a shared link. Framework-agnostic — no router dependency, safe to call during SSR.
+
+```tsx
+import { useUrlPagination } from 'everyday-helper/hooks';
+
+function OrdersPage() {
+  const { page, pageSize, nextPage, prevPage } = useUrlPagination({ initialPageSize: 20 });
+
+  const { data } = useOrdersQuery({ page, pageSize });
+
+  return (
+    <div>
+      <OrdersTable orders={data} />
+      <button onClick={prevPage}>Prev</button>
+      <button onClick={nextPage}>Next</button>
+    </div>
+  );
+}
+```
+
+**Options:**
+
+- `pageParam` - Query param name for the page (default: `'page'`)
+- `pageSizeParam` - Query param name for the page size (default: `'pageSize'`)
+- `initialPage` - Fallback page when the URL has none (default: `1`)
+- `initialPageSize` - Fallback page size when the URL has none (default: `10`)
+
+**Returns:**
+
+- `page`, `pageSize` - Current pagination state (read from the URL on mount)
+- `setPage(page)`, `setPageSize(pageSize)` - Update state and the URL (changing `pageSize` resets to page 1)
+- `nextPage()`, `prevPage()` - Convenience navigation
 
 ---
 

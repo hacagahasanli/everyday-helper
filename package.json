@@ -4,6 +4,7 @@
   "description": "A lightweight collection of React hooks, utility functions, and helpers for modern React development",
   "license": "MIT",
   "type": "module",
+  "sideEffects": false,
   "publishConfig": {
     "access": "public"
   },
@@ -93,6 +94,5 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vitest": "^2.1.0"
-  },
-  "dependencies": {}
+  }
 }

@@ -72,6 +72,91 @@ declare const CookieManager: {
     remove: (name: string, options?: CookieOptions) => void;
 };
 
+/**
+ * Options for serializing a server-side ("Set-Cookie") cookie.
+ * Framework-agnostic — works with any request/response abstraction
+ * (Next.js Route Handlers, Pages Router `res`, Express, raw Node `http`, etc.).
+ */
+interface ServerCookieOptions {
+    path?: string;
+    domain?: string;
+    secure?: boolean;
+    httpOnly?: boolean;
+    sameSite?: "strict" | "lax" | "none";
+    maxAge?: number;
+    expires?: number | string | Date;
+}
+/**
+ * Parses a raw `Cookie` request header into a name/value map.
+ * @param cookieHeader - Raw `Cookie` header value (e.g. `req.headers.cookie`)
+ */
+declare const parseCookieHeader: (cookieHeader?: string | null) => Record<string, string>;
+/**
+ * Reads a single cookie value from a raw `Cookie` request header.
+ * @param name - Cookie name
+ * @param cookieHeader - Raw `Cookie` header value (e.g. `req.headers.cookie`)
+ */
+declare const getServerCookie: (name: string, cookieHeader?: string | null) => string | null;
+/**
+ * Builds a `Set-Cookie` header value. The caller is responsible for
+ * attaching it to the response (e.g. `res.setHeader('Set-Cookie', value)`
+ * or `next/headers` `cookies().set(...)`).
+ * @param name - Cookie name
+ * @param value - Cookie value
+ * @param options - Cookie options (domain, path, expiry, etc.)
+ */
+declare const serializeCookie: (name: string, value: string, options?: ServerCookieOptions) => string;
+/**
+ * Minimal cookie store shape most SSR frameworks already expose
+ * (`next/headers` `cookies()`, `NextResponse.cookies`, SvelteKit's
+ * `event.cookies`, etc.) — anything with this shape works.
+ */
+interface ServerCookieStore {
+    get(name: string): {
+        value: string;
+    } | undefined;
+    set(name: string, value: string, options?: Omit<ServerCookieOptions, "expires">): void;
+    delete(name: string): void;
+}
+/**
+ * Wraps a server cookie store (from your framework's request/response) so
+ * it can be called the same way as `CookieManager` — `.set`/`.get`/`.remove`
+ * — instead of re-deriving the store's raw API at every call site.
+ * @param cookieStore - e.g. `await cookies()` (Next.js App Router) or
+ * `event.cookies` (SvelteKit)
+ */
+declare const createServerCookieManager: (cookieStore: ServerCookieStore) => {
+    set: (name: string, value: string, options?: Omit<ServerCookieOptions, "expires">) => void;
+    get: (name: string) => string | null;
+    remove: (name: string) => void;
+};
+/**
+ * Default options for an authentication token cookie. Shaped to match
+ * Next.js's native cookie APIs (`next/headers` `cookies().set()`,
+ * `NextRequest`/`NextResponse.cookies.set()`) as well as `serializeCookie`,
+ * so the same object can be spread into any of them.
+ */
+declare const DEFAULT_AUTH_COOKIE_OPTIONS: Omit<ServerCookieOptions, "maxAge">;
+/**
+ * Default lifetime (in seconds) for an authentication token cookie — 7 days.
+ */
+declare const DEFAULT_AUTH_COOKIE_MAX_AGE: number;
+/**
+ * Builds a consistent options object for an authentication token cookie,
+ * so `secure`/`httpOnly`/`sameSite`/`maxAge` aren't re-typed (and drifted)
+ * at every call site. Pass the result directly to `next/headers`
+ * `cookies().set()`, `NextResponse.cookies.set()`, or `serializeCookie`.
+ * @param maxAge - Cookie lifetime in seconds (defaults to 7 days)
+ * @param overrides - Per-call overrides merged on top of the defaults
+ */
+declare const createAuthCookieOptions: (maxAge?: number, overrides?: Partial<Omit<ServerCookieOptions, "expires">>) => Omit<ServerCookieOptions, "expires">;
+/**
+ * Builds a `Set-Cookie` header value that expires the cookie immediately.
+ * @param name - Cookie name
+ * @param options - Path/domain must match the cookie that was originally set
+ */
+declare const removeServerCookie: (name: string, options?: Pick<ServerCookieOptions, "path" | "domain">) => string;
+
 declare const createStorage: (type: "local" | "session") => {
     /** Save any value (auto JSON.stringified) */
     set: <T>(key: string, value: T) => void;
@@ -420,8 +505,20 @@ declare const generateQuery: (query: Record<string, any>) => string;
 /**
  * Checks if the user is logged in by verifying
  * the presence of an access token cookie.
+ *
+ * Client-side only (reads `document.cookie`) — for SSR contexts
+ * (e.g. Next.js `getServerSideProps`, Route Handlers, middleware),
+ * use `isLoggedInFromCookieHeader` instead.
  */
 declare const isLoggedIn: (name: string) => boolean;
+/**
+ * Checks if the user is logged in on the server by verifying
+ * the presence of an access token cookie in a raw `Cookie` request header.
+ *
+ * @param name - Cookie name
+ * @param cookieHeader - Raw `Cookie` header value (e.g. `req.headers.cookie`)
+ */
+declare const isLoggedInFromCookieHeader: (name: string, cookieHeader?: string | null) => boolean;
 
 declare enum DateFormats {
     MMMM_DD_YYYY = "MMMM DD, YYYY",
@@ -1454,4 +1551,4 @@ declare const bounceIn: (order?: number, className?: string, style?: CSSProperti
     style: CSSProperties;
 };
 
-export { type ClassValue, type ComputeAnchorParams, CookieManager, DateFormats, type DateInput, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, FormDataBuilder, type FormatLang, type GenerateOrderedDateTextModel, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type ThrottleOptions, type ThrottledFunction, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, compactArr, compactStr, compareDates, compose, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createFormData, createStorage, curry, debounce, deepClone, deepFreeze, deepMerge, delay, difference, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatDate, formatDateRange, formatRelativeTime, fromPairs, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getEndpoint, getImageUrl, getInitials, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isBetweenDates, isBrowser, isDocumentAvailable, isEmpty, isEqual, isFuture, isLoggedIn, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseDate, partial, partition, pick, pushIf, rateLimit, reject, repeat, retry, reverse, reverseArr, safeCall, safeDocument, safeWindow, sample, sampleSize, scaleIn, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toISOString, toKebabCase, toPascalCase, toSnakeCase, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
+export { type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, FormDataBuilder, type FormatLang, type GenerateOrderedDateTextModel, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, compactArr, compactStr, compareDates, compose, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, debounce, deepClone, deepFreeze, deepMerge, delay, difference, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatDate, formatDateRange, formatRelativeTime, fromPairs, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getEndpoint, getImageUrl, getInitials, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isBetweenDates, isBrowser, isEmpty, isEqual, isFuture, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, pushIf, rateLimit, reject, removeServerCookie, repeat, retry, reverse, reverseArr, safeCall, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toISOString, toKebabCase, toPascalCase, toSnakeCase, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useWindowSize, values, withAzerbaijanCountryCode, without, zip };

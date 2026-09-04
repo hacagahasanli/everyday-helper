@@ -1,4 +1,5 @@
 import { CookieManager } from '../lib/cookie';
+import { getServerCookie } from '../lib/server-cookie';
 
 import { isNulOrUndefined } from './common-utils';
 
@@ -74,7 +75,25 @@ export const generateQuery = (query: Record<string, any>): string => {
 /**
  * Checks if the user is logged in by verifying
  * the presence of an access token cookie.
+ *
+ * Client-side only (reads `document.cookie`) — for SSR contexts
+ * (e.g. Next.js `getServerSideProps`, Route Handlers, middleware),
+ * use `isLoggedInFromCookieHeader` instead.
  */
 export const isLoggedIn = (name: string) => {
   return !!CookieManager.get(name);
+};
+
+/**
+ * Checks if the user is logged in on the server by verifying
+ * the presence of an access token cookie in a raw `Cookie` request header.
+ *
+ * @param name - Cookie name
+ * @param cookieHeader - Raw `Cookie` header value (e.g. `req.headers.cookie`)
+ */
+export const isLoggedInFromCookieHeader = (
+  name: string,
+  cookieHeader?: string | null,
+) => {
+  return !!getServerCookie(name, cookieHeader);
 };
