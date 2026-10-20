@@ -13,6 +13,20 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 - `toLocaleUpper` for locale-aware upper-casing (default `az`)
 - `prettifySnakeCase` for turning snake_case / UPPER_SNAKE_CASE values into title case (Unicode-aware)
 - Azerbaijani grammar helpers `ablativeSuffix`, `dativeSuffix`, `toDative`
+- `isIsoDateString`, `formatIsoDate`, `formatIfIsoDate` for formatting ISO date strings (date-only values read as local dates)
+- `formatAzDate`, `formatAzDateTime`, `formatAzDateShort` and `AZ_MONTHS` / `AZ_MONTHS_SHORT` constants for Azerbaijani date output
+- `combineDateAndTime` for merging a day and a time into one date-time string
+- `isBeforeToday`, `isAfterToday` for day-level comparison with today
+- Date picker helpers `disabledBeforeDay`, `disabledOnOrBeforeDay`, `disabledOutsideRange`, `getDisabledPastTime`
+- `DateLike` type so date helpers accept date-library objects (e.g. Dayjs)
+- `reformatDate` for converting a date string between formats
+- `computeAnchor` and `generateOrderedDateText` are now exported (previously internal to `getDaysDiffAsText`)
+
+### Changed
+
+- `formatDate` supports the `ss` (seconds) token
+- `parseDate` parses any `YYYY MM DD HH mm ss` format in local time (date-only values no longer shift to UTC), `format` defaults to `YYYY-MM-DD`, impossible dates (e.g. `2026-02-31`) return `undefined`
+- `generateOrderedDateText` `lang` is optional (default `az`)
 
 ## [1.3.13] - 2026-09-04
 

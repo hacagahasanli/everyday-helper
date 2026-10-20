@@ -929,11 +929,27 @@ const age = getAge('1990-01-01'); // Age in years
 - `startOf/endOf(date, unit)` - Get start/end of period
 - `formatDateRange(start, end, format)` - Format range
 - `getAge(birthdate)` - Calculate age
-- `parseDate(dateString, format)` - Parse with format
+- `parseDate(dateString, format?)` - Parse by format in local time (tokens `YYYY MM DD HH mm ss`, default `YYYY-MM-DD`)
+- `reformatDate(value, fromFormat, toFormat)` - `'05-10-2026'` (`DD-MM-YYYY`) → `'2026-10-05'` (`YYYY-MM-DD`)
+- `computeAnchor({ startDate, totalMonths })` - Add months, clamped to month end (Jan 31 + 1 → Feb 28)
+- `generateOrderedDateText({ order, lang?, date })` - `'1 il 3 ay 9 gün'` (az/en/ru, YMD/DMY/MDY)
 - `toISOString(date)` - Convert to ISO string
 - `toUnixTimestamp(date)` - Convert to Unix timestamp
 - `now()` - Current date/time
 - `compareDates(date1, date2)` - Compare dates
+- `isIsoDateString(value)` - Checks for a `YYYY-MM-DD…` string
+- `formatIsoDate(value, format)` - Formats ISO date strings (date-only read as local), leaves other values as is
+- `formatIfIsoDate(value, format)` - Formats only ISO date strings, returns other values unchanged
+- `formatAzDate(value, fallback)` - `'5 Oktyabr 2026'`
+- `formatAzDateTime(value, fallback)` - `'5 Oktyabr 2026, 14:30'`
+- `formatAzDateShort(value, fallback)` - `'05 Okt 2026'`
+- `combineDateAndTime(date, time, format)` - Day from one value, hours/minutes from another
+- `isBeforeToday/isAfterToday(date)` - Day-level comparison with today
+- `disabledBeforeDay/disabledOnOrBeforeDay(referenceDate)` - Date picker `disabledDate` predicates
+- `disabledOutsideRange({ min, max })` - Date picker predicate for an inclusive day range
+- `getDisabledPastTime(selectedDate)` - Time picker `disabledTime` for past hours/minutes of today
+
+Date helpers accept `DateLike` values, so date-library objects (e.g. Dayjs from a date picker) work without extra conversion. `formatDate` supports the `ss` (seconds) token.
 
 ---
 
@@ -1174,6 +1190,17 @@ DateFormats.YYYY_MM_DD_WITH_HYPEN; // "YYYY-MM-DD"
 DateFormats.DD_MM_YYYY_WITH_HYPHEN; // "DD-MM-YYYY"
 DateFormats.DD_MM_YYYY_HH_mm; // "DD/MM/YYYY HH:mm"
 DateFormats.DD_MMM_YYYY_WITH_SPACE; // "DD MMM YYYY"
+```
+
+### AZ_MONTHS / AZ_MONTHS_SHORT
+
+Azerbaijani month names, indexed like `Date#getMonth()`.
+
+```tsx
+import { AZ_MONTHS, AZ_MONTHS_SHORT } from 'everyday-helper/constants';
+
+AZ_MONTHS[9]; // "Oktyabr"
+AZ_MONTHS_SHORT[9]; // "Okt"
 ```
 
 ---
