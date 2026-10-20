@@ -4,6 +4,25 @@ All notable changes to this package are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)  
 and this project adheres to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [Unreleased]
+
+### Added
+
+- `isIsoDateString`, `formatIsoDate`, `formatIfIsoDate` for formatting ISO date strings (date-only values read as local dates)
+- `formatAzDate`, `formatAzDateTime`, `formatAzDateShort` and `AZ_MONTHS` / `AZ_MONTHS_SHORT` constants for Azerbaijani date output
+- `combineDateAndTime` for merging a day and a time into one date-time string
+- `isBeforeToday`, `isAfterToday` for day-level comparison with today
+- Date picker helpers `disabledBeforeDay`, `disabledOnOrBeforeDay`, `disabledOutsideRange`, `getDisabledPastTime`
+- `DateLike` type so date helpers accept date-library objects (e.g. Dayjs)
+- `reformatDate` for converting a date string between formats
+- `computeAnchor` and `generateOrderedDateText` are now exported (previously internal to `getDaysDiffAsText`)
+
+### Changed
+
+- `formatDate` supports the `ss` (seconds) token
+- `parseDate` parses any `YYYY MM DD HH mm ss` format in local time (date-only values no longer shift to UTC), `format` defaults to `YYYY-MM-DD`, impossible dates (e.g. `2026-02-31`) return `undefined`
+- `generateOrderedDateText` `lang` is optional (default `az`)
+
 ## [1.3.13] - 2026-09-04
 
 ### Added

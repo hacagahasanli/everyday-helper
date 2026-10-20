@@ -485,6 +485,36 @@ var DateLangLabels = {
   }
 };
 
+// src/constants/AzMonths.ts
+var AZ_MONTHS = [
+  "Yanvar",
+  "Fevral",
+  "Mart",
+  "Aprel",
+  "May",
+  "\u0130yun",
+  "\u0130yul",
+  "Avqust",
+  "Sentyabr",
+  "Oktyabr",
+  "Noyabr",
+  "Dekabr"
+];
+var AZ_MONTHS_SHORT = [
+  "Yan",
+  "Fev",
+  "Mar",
+  "Apr",
+  "May",
+  "\u0130yn",
+  "\u0130yl",
+  "Avq",
+  "Sen",
+  "Okt",
+  "Noy",
+  "Dek"
+];
+
 // src/utils/date-utils.ts
 var toDate = (date) => {
   if (!date) return void 0;
@@ -498,7 +528,11 @@ var computeAnchor = ({ totalMonths, startDate }) => {
   const daysInMonth = new Date(Date.UTC(anchorYear, anchorMonth + 1, 0)).getUTCDate();
   return new Date(Date.UTC(anchorYear, anchorMonth, Math.min(startDate.getUTCDate(), daysInMonth)));
 };
-var generateOrderedDateText = ({ order, lang, date }) => {
+var generateOrderedDateText = ({
+  order,
+  lang = "az",
+  date
+}) => {
   let ordered = [];
   const { years, days, months } = date;
   const labels = getLabels(lang, years, months, days);
@@ -570,7 +604,8 @@ var formatDate = (date, format = "DD MMM YYYY" /* DD_MMM_YYYY_WITH_SPACE */) => 
     MM: pad(d.getMonth() + 1),
     DD: pad(d.getDate()),
     HH: pad(d.getHours()),
-    mm: pad(d.getMinutes())
+    mm: pad(d.getMinutes()),
+    ss: pad(d.getSeconds())
   };
   return Object.entries(tokens).reduce(
     (acc, [token, value]) => acc.replace(new RegExp(token, "g"), value),
@@ -704,12 +739,37 @@ var getAge = (birthdate) => {
   if (m < 0 || m === 0 && today.getDate() < d.getDate()) age--;
   return age;
 };
-var parseDate = (dateString, format) => {
-  if (format === "DD/MM/YYYY") {
-    const [dd, mm, yyyy] = dateString.split("/").map(Number);
-    return new Date(yyyy, mm - 1, dd);
-  }
-  return toDate(dateString);
+var PARSE_TOKEN_PATTERN = /YYYY|MM|DD|HH|mm|ss/g;
+var matchFormat = (value, format) => {
+  const tokenOrder = [];
+  const pattern = format.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(PARSE_TOKEN_PATTERN, (token) => {
+    tokenOrder.push(token);
+    return token === "YYYY" ? "(\\d{4})" : "(\\d{1,2})";
+  });
+  const match = new RegExp(`^${pattern}$`).exec(value.trim());
+  if (!match) return void 0;
+  const parts = { YYYY: 1970, MM: 1, DD: 1, HH: 0, mm: 0, ss: 0 };
+  tokenOrder.forEach((token, index) => {
+    parts[token] = Number(match[index + 1]);
+  });
+  return parts;
+};
+var toValidLocalDate = (parts) => {
+  const date = new Date(parts.YYYY, parts.MM - 1, parts.DD, parts.HH, parts.mm, parts.ss);
+  const isOverflow = date.getFullYear() !== parts.YYYY || date.getMonth() !== parts.MM - 1 || date.getDate() !== parts.DD || date.getHours() !== parts.HH || date.getMinutes() !== parts.mm;
+  return isOverflow ? void 0 : date;
+};
+var parseByFormat = (value, format) => {
+  const parts = matchFormat(value, format);
+  return parts && toValidLocalDate(parts);
+};
+var parseDate = (dateString, format = "YYYY-MM-DD" /* YYYY_MM_DD_WITH_HYPEN */) => {
+  const parts = matchFormat(dateString, format);
+  return parts ? toValidLocalDate(parts) : toDate(dateString);
+};
+var reformatDate = (value, fromFormat, toFormat) => {
+  const date = parseByFormat(value, fromFormat);
+  return date ? formatDate(date, toFormat) : void 0;
 };
 var toISOString = (date) => {
   const d = toDate(date);
@@ -772,6 +832,95 @@ function getDaysDiffAsText({
     dayCount: days
   };
 }
+var ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}/;
+var ISO_DATE_ONLY_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+var toLocalDate = (date) => {
+  if (date === null || date === void 0 || date === "") return void 0;
+  if (typeof date === "string") {
+    const match = ISO_DATE_ONLY_PATTERN.exec(date);
+    if (match) return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  }
+  const d = date instanceof Date ? date : new Date(date.valueOf());
+  return isNaN(d.getTime()) ? void 0 : d;
+};
+var toDayTime = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+var isIsoDateString = (value) => typeof value === "string" && ISO_DATE_PATTERN.test(value);
+var formatIsoDate = (value, format) => {
+  if (value === null || value === void 0 || value === "") return null;
+  if (!isIsoDateString(value)) return String(value);
+  const date = toLocalDate(value);
+  return (date && formatDate(date, format)) ?? value;
+};
+var formatIfIsoDate = (value, format) => isIsoDateString(value) ? formatIsoDate(value, format) ?? value : value;
+var formatAzDate = (value, fallback = "\u2014") => {
+  if (value === null || value === void 0 || value === "") return fallback;
+  const date = toLocalDate(value);
+  if (!date) return String(value);
+  return `${date.getDate()} ${AZ_MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+};
+var formatAzDateTime = (value, fallback = "\u2014") => {
+  if (value === null || value === void 0 || value === "") return fallback;
+  const date = toLocalDate(value);
+  if (!date) return String(value);
+  return `${formatAzDate(date)}, ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+var formatAzDateShort = (value, fallback = "\u2014") => {
+  if (value === null || value === void 0 || value === "") return fallback;
+  const date = toLocalDate(value);
+  if (!date) return String(value);
+  return `${pad(date.getDate())} ${AZ_MONTHS_SHORT[date.getMonth()]} ${date.getFullYear()}`;
+};
+var combineDateAndTime = (date, time, format = "YYYY-MM-DDTHH:mm:ss") => {
+  const day = toLocalDate(date);
+  const clock = toLocalDate(time);
+  if (!day || !clock) return "";
+  const combined = new Date(
+    day.getFullYear(),
+    day.getMonth(),
+    day.getDate(),
+    clock.getHours(),
+    clock.getMinutes()
+  );
+  return formatDate(combined, format) ?? "";
+};
+var isBeforeToday = (date) => {
+  const d = toLocalDate(date);
+  return d ? toDayTime(d) < toDayTime(/* @__PURE__ */ new Date()) : false;
+};
+var isAfterToday = (date) => {
+  const d = toLocalDate(date);
+  return d ? toDayTime(d) > toDayTime(/* @__PURE__ */ new Date()) : false;
+};
+var disabledBeforeDay = (referenceDate) => (date) => {
+  const reference = toLocalDate(referenceDate);
+  const d = toLocalDate(date);
+  return !!reference && !!d && toDayTime(d) < toDayTime(reference);
+};
+var disabledOnOrBeforeDay = (referenceDate) => (date) => {
+  const reference = toLocalDate(referenceDate);
+  const d = toLocalDate(date);
+  return !!reference && !!d && toDayTime(d) <= toDayTime(reference);
+};
+var disabledOutsideRange = ({ min: min2, max: max2 }) => (date) => {
+  const d = toLocalDate(date);
+  if (!d) return false;
+  const minDate = toLocalDate(min2);
+  const maxDate = toLocalDate(max2);
+  const day = toDayTime(d);
+  return !!minDate && day < toDayTime(minDate) || !!maxDate && day > toDayTime(maxDate);
+};
+var rangeFromZero = (length) => Array.from({ length }, (_, i) => i);
+var getDisabledPastTime = (selectedDate) => () => {
+  const selected = toLocalDate(selectedDate);
+  const current = /* @__PURE__ */ new Date();
+  if (!selected || toDayTime(selected) !== toDayTime(current)) return {};
+  const currentHour = current.getHours();
+  const currentMinute = current.getMinutes();
+  return {
+    disabledHours: () => rangeFromZero(currentHour),
+    disabledMinutes: (selectedHour) => selectedHour === currentHour ? rangeFromZero(currentMinute) : []
+  };
+};
 
 // src/utils/phone-utils.ts
 var hasAzerbaijanCountryCode = (phoneNumber) => {
@@ -2289,6 +2438,8 @@ var useScrollThreshold = (threshold = 300) => {
   return isReached;
 };
 export {
+  AZ_MONTHS,
+  AZ_MONTHS_SHORT,
   CookieManager,
   DEFAULT_AUTH_COOKIE_MAX_AGE,
   DEFAULT_AUTH_COOKIE_OPTIONS,
@@ -2309,10 +2460,12 @@ export {
   cleanObject,
   clone,
   cn,
+  combineDateAndTime,
   compactArr,
   compactStr,
   compareDates,
   compose,
+  computeAnchor,
   concatIf,
   constant,
   convertBase64ToFile,
@@ -2330,6 +2483,9 @@ export {
   deepMerge,
   delay,
   difference,
+  disabledBeforeDay,
+  disabledOnOrBeforeDay,
+  disabledOutsideRange,
   endOf,
   endsWith,
   entries,
@@ -2343,15 +2499,22 @@ export {
   flatten,
   flattenDeep,
   flip,
+  formatAzDate,
+  formatAzDateShort,
+  formatAzDateTime,
   formatDate,
   formatDateRange,
+  formatIfIsoDate,
+  formatIsoDate,
   formatRelativeTime,
   fromPairs,
+  generateOrderedDateText,
   generateQuery,
   get,
   getAge,
   getDateDifference,
   getDaysDiffAsText,
+  getDisabledPastTime,
   getEndpoint,
   getImageUrl,
   getInitials,
@@ -2363,12 +2526,15 @@ export {
   includesIgnoreCase,
   intersection,
   invert,
+  isAfterToday,
+  isBeforeToday,
   isBetweenDates,
   isBrowser,
   isDocumentAvailable,
   isEmpty,
   isEqual,
   isFuture,
+  isIsoDateString,
   isLoggedIn,
   isLoggedInFromCookieHeader,
   isNotEmpty,
@@ -2411,6 +2577,7 @@ export {
   pick,
   pushIf,
   rateLimit,
+  reformatDate,
   reject,
   removeServerCookie,
   repeat,

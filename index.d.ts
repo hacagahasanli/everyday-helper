@@ -574,7 +574,7 @@ type PluralLabel = {
     many?: string;
 };
 interface GenerateOrderedDateTextModel {
-    lang: FormatLang;
+    lang?: FormatLang;
     order: DaysFormatOrder;
     date: {
         days: number;
@@ -601,6 +601,29 @@ interface DaysToYMDOutputModel {
     yearCount: number;
     monthCount: number;
 }
+/**
+ * Adds whole months to a date, clamping the day to the last day of the target month
+ * (Jan 31 + 1 month → Feb 28, not Mar 3). Works on UTC calendar fields.
+ *
+ * @param params - `startDate` and the number of months to add (`totalMonths`)
+ * @returns New date at UTC midnight
+ *
+ * @example
+ * computeAnchor({ startDate: new Date(Date.UTC(2026, 0, 31)), totalMonths: 1 }); // 2026-02-28
+ */
+declare const computeAnchor: ({ totalMonths, startDate }: ComputeAnchorParams) => Date;
+/**
+ * Builds a localized "years months days" text. Zero parts are skipped;
+ * when every part is zero, "0 <day>" is returned.
+ *
+ * @param params - `order` (YMD, DMY, MDY), `lang` (default: "az") and the `date` parts
+ * @returns e.g. "1 il 3 ay 9 gün"
+ *
+ * @example
+ * generateOrderedDateText({ order: 'YMD', date: { years: 1, months: 3, days: 9 } }); // '1 il 3 ay 9 gün'
+ * generateOrderedDateText({ order: 'DMY', lang: 'en', date: { years: 1, months: 0, days: 2 } }); // '2 days 1 year'
+ */
+declare const generateOrderedDateText: ({ order, lang, date, }: GenerateOrderedDateTextModel) => string;
 declare const formatDate: (date: DateInput, format?: DateFormats | string) => string | undefined;
 declare const formatRelativeTime: (date: DateInput, baseDate?: DateInput) => string | undefined;
 declare const isValidDate: (date: DateInput) => boolean;
@@ -618,7 +641,33 @@ declare const startOf: (date: DateInput, unit?: "day" | "month" | "year") => Dat
 declare const endOf: (date: DateInput, unit?: "day" | "month" | "year") => Date | undefined;
 declare const formatDateRange: (startDate: DateInput, endDate: DateInput, format?: DateFormats | string, separator?: string) => string | undefined;
 declare const getAge: (birthdate: DateInput) => number | undefined;
-declare const parseDate: (dateString: string, format: string) => Date | undefined;
+/**
+ * Parses a date string by format, in local time (tokens: YYYY, MM, DD, HH, mm, ss).
+ * Date-only values never shift a day because of the time zone.
+ * Falls back to the native parser only when the value does not match the format at all.
+ *
+ * @param dateString - Date string
+ * @param format - Format of the input (default: "YYYY-MM-DD")
+ * @returns Parsed date, or undefined when invalid (e.g. "2026-02-31")
+ *
+ * @example
+ * parseDate('2026-10-05'); // 5 Oct 2026, 00:00 local
+ * parseDate('05/10/2026 14:30', 'DD/MM/YYYY HH:mm'); // 5 Oct 2026, 14:30 local
+ */
+declare const parseDate: (dateString: string, format?: DateFormats | string) => Date | undefined;
+/**
+ * Converts a date string from one format to another (tokens: YYYY, MM, DD, HH, mm, ss).
+ *
+ * @param value - Date string
+ * @param fromFormat - Format of the input
+ * @param toFormat - Format of the output
+ * @returns Reformatted string, or undefined when the input does not match `fromFormat`
+ *
+ * @example
+ * reformatDate('05-10-2026', 'DD-MM-YYYY', 'YYYY-MM-DD'); // '2026-10-05'
+ * reformatDate('2026-10-05T14:30', 'YYYY-MM-DDTHH:mm', 'DD.MM.YYYY HH:mm'); // '05.10.2026 14:30'
+ */
+declare const reformatDate: (value: string, fromFormat: DateFormats | string, toFormat: DateFormats | string) => string | undefined;
 declare const toISOString: (date: DateInput) => string | undefined;
 declare const toUnixTimestamp: (date: DateInput) => number | undefined;
 declare const now: () => Date;
@@ -668,6 +717,139 @@ declare const compareDates: (date1: DateInput, date2: DateInput) => -1 | 0 | 1 |
  * // → { yearCount: 1, monthCount: 0, dayCount: 0 }
  */
 declare function getDaysDiffAsText({ options, endDate, startDate, }: DaysToYMDParams): DaysToYMDOutputModel | string;
+/**
+ * Any date value, including date-library objects (e.g. Dayjs, Moment)
+ * that convert to a timestamp via `valueOf()`.
+ */
+type DateLike = DateInput | {
+    valueOf(): number;
+};
+/**
+ * Checks whether a value is a string starting with an ISO date (`YYYY-MM-DD…`).
+ *
+ * @param value - Value to check
+ * @returns True for strings like "2026-10-05" or "2026-10-05T14:30:00"
+ */
+declare const isIsoDateString: (value: unknown) => value is string;
+/**
+ * Formats an ISO date string. Date-only values ("2026-10-05") are read as local dates,
+ * so they never shift a day because of the time zone.
+ *
+ * @param value - Value to format
+ * @param format - Output format (tokens: YYYY, MM, DD, HH, mm, ss)
+ * @returns Formatted date, `null` for empty values, the value as a string when it is not
+ *   an ISO date (e.g. "2015", "3 ay")
+ *
+ * @example
+ * formatIsoDate('2026-10-05', 'DD-MM-YYYY'); // '05-10-2026'
+ * formatIsoDate('2015', 'DD-MM-YYYY'); // '2015'
+ */
+declare const formatIsoDate: (value: unknown, format: DateFormats | string) => string | null;
+/**
+ * Formats a value only when it is an ISO date string, otherwise returns it unchanged.
+ * Useful when looping over mixed values (lookups, history entries).
+ *
+ * @param value - Any value
+ * @param format - Output format (tokens: YYYY, MM, DD, HH, mm, ss)
+ * @returns Formatted date or the original value
+ */
+declare const formatIfIsoDate: <T>(value: T, format: DateFormats | string) => T | string;
+/**
+ * Formats a date with the full Azerbaijani month name.
+ *
+ * @param value - Date value
+ * @param fallback - Text returned for empty values (default: "—")
+ * @returns e.g. "5 Oktyabr 2026"; the value as a string when it cannot be parsed
+ */
+declare const formatAzDate: (value: DateLike, fallback?: string) => string;
+/**
+ * Formats a date and time with the full Azerbaijani month name.
+ *
+ * @param value - Date value
+ * @param fallback - Text returned for empty values (default: "—")
+ * @returns e.g. "5 Oktyabr 2026, 14:30"; the value as a string when it cannot be parsed
+ */
+declare const formatAzDateTime: (value: DateLike, fallback?: string) => string;
+/**
+ * Formats a date with the short Azerbaijani month name and a zero-padded day.
+ *
+ * @param value - Date value
+ * @param fallback - Text returned for empty values (default: "—")
+ * @returns e.g. "05 Okt 2026"; the value as a string when it cannot be parsed
+ */
+declare const formatAzDateShort: (value: DateLike, fallback?: string) => string;
+/**
+ * Takes the calendar day from one value and the hours/minutes from another (local time).
+ * Seconds and milliseconds are reset to zero.
+ *
+ * @param date - Value providing the day
+ * @param time - Value providing hours and minutes
+ * @param format - Output format (default: "YYYY-MM-DDTHH:mm:ss")
+ * @returns Combined, formatted date-time, or `''` when either value is missing/invalid
+ *
+ * @example
+ * combineDateAndTime('2026-10-05', '2026-01-01T14:30:00'); // '2026-10-05T14:30:00'
+ */
+declare const combineDateAndTime: (date: DateLike, time: DateLike, format?: DateFormats | string) => string;
+/**
+ * Checks whether a date falls on a day before today (time of day is ignored).
+ *
+ * @param date - Date value
+ * @returns True for yesterday or earlier
+ */
+declare const isBeforeToday: (date: DateLike) => boolean;
+/**
+ * Checks whether a date falls on a day after today (time of day is ignored).
+ * Can be passed directly as a date picker's `disabledDate`.
+ *
+ * @param date - Date value
+ * @returns True for tomorrow or later
+ */
+declare const isAfterToday: (date: DateLike) => boolean;
+/**
+ * Creates a predicate that disables days before a reference day.
+ * Nothing is disabled when the reference is empty.
+ *
+ * @param referenceDate - First selectable day
+ * @returns `(date) => boolean`, usable as a date picker's `disabledDate`
+ */
+declare const disabledBeforeDay: (referenceDate?: DateLike) => (date: DateLike) => boolean;
+/**
+ * Creates a predicate that disables the reference day and every day before it.
+ * Nothing is disabled when the reference is empty.
+ *
+ * @param referenceDate - Last disabled day
+ * @returns `(date) => boolean`, usable as a date picker's `disabledDate`
+ */
+declare const disabledOnOrBeforeDay: (referenceDate?: DateLike) => (date: DateLike) => boolean;
+interface DisabledOutsideRangeParams {
+    min?: DateLike;
+    max?: DateLike;
+}
+/**
+ * Creates a predicate that disables days outside `[min, max]` (both inclusive).
+ * An empty bound is ignored.
+ *
+ * @param params - `min` and `max` selectable days
+ * @returns `(date) => boolean`, usable as a date picker's `disabledDate`
+ *
+ * @example
+ * // only today up to the end date
+ * disabledOutsideRange({ min: new Date(), max: endDate });
+ */
+declare const disabledOutsideRange: ({ min, max }: DisabledOutsideRangeParams) => (date: DateLike) => boolean;
+interface DisabledTimeConfig {
+    disabledHours?: () => number[];
+    disabledMinutes?: (selectedHour: number) => number[];
+}
+/**
+ * Creates a time picker `disabledTime` callback that disables past hours and minutes
+ * when the selected day is today. Other days are fully selectable.
+ *
+ * @param selectedDate - Currently selected day
+ * @returns Function returning `{ disabledHours, disabledMinutes }`, or `{}` for other days
+ */
+declare const getDisabledPastTime: (selectedDate?: DateLike) => () => DisabledTimeConfig;
 
 /** Checks if a phone number already starts with Azerbaijan country code (+994 or 994) */
 declare const hasAzerbaijanCountryCode: (phoneNumber: string | number) => boolean;
@@ -1585,4 +1767,7 @@ declare const bounceIn: (order?: number, className?: string, style?: CSSProperti
     style: CSSProperties;
 };
 
-export { type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, FormDataBuilder, type FormatLang, type GenerateOrderedDateTextModel, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, type UseListPaginationOptions, type UseListPaginationResult, type UseUrlPaginationOptions, type UseUrlPaginationResult, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, compactArr, compactStr, compareDates, compose, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, debounce, deepClone, deepFreeze, deepMerge, delay, difference, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatDate, formatDateRange, formatRelativeTime, fromPairs, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getEndpoint, getImageUrl, getInitials, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isBetweenDates, isBrowser, isDocumentAvailable, isEmpty, isEqual, isFuture, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, pushIf, rateLimit, reject, removeServerCookie, repeat, retry, reverse, reverseArr, safeCall, safeDocument, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toISOString, toKebabCase, toPascalCase, toSnakeCase, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useListPagination, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useUrlPagination, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
+declare const AZ_MONTHS: readonly ["Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun", "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"];
+declare const AZ_MONTHS_SHORT: readonly ["Yan", "Fev", "Mar", "Apr", "May", "İyn", "İyl", "Avq", "Sen", "Okt", "Noy", "Dek"];
+
+export { AZ_MONTHS, AZ_MONTHS_SHORT, type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DateLike, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, type DisabledOutsideRangeParams, type DisabledTimeConfig, FormDataBuilder, type FormatLang, type GenerateOrderedDateTextModel, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, type UseListPaginationOptions, type UseListPaginationResult, type UseUrlPaginationOptions, type UseUrlPaginationResult, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, combineDateAndTime, compactArr, compactStr, compareDates, compose, computeAnchor, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, debounce, deepClone, deepFreeze, deepMerge, delay, difference, disabledBeforeDay, disabledOnOrBeforeDay, disabledOutsideRange, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatAzDate, formatAzDateShort, formatAzDateTime, formatDate, formatDateRange, formatIfIsoDate, formatIsoDate, formatRelativeTime, fromPairs, generateOrderedDateText, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getDisabledPastTime, getEndpoint, getImageUrl, getInitials, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isAfterToday, isBeforeToday, isBetweenDates, isBrowser, isDocumentAvailable, isEmpty, isEqual, isFuture, isIsoDateString, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, pushIf, rateLimit, reformatDate, reject, removeServerCookie, repeat, retry, reverse, reverseArr, safeCall, safeDocument, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toISOString, toKebabCase, toPascalCase, toSnakeCase, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useListPagination, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useUrlPagination, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
