@@ -80,6 +80,27 @@ export const extractBase64FromDataUrl = (dataUrl: string): string => {
   return match[1];
 };
 
+/**
+ * Turns a raw Base64 string into a data URL. Values that are already a data URL
+ * or an http(s) URL are returned unchanged. Inverse of `extractBase64FromDataUrl`.
+ *
+ * @param src - Raw Base64, data URL or http(s) URL
+ * @param mimeType - MIME type for raw Base64 (default: "image/jpeg")
+ * @returns Data URL / URL, or undefined for empty values
+ *
+ * @example
+ * toDataUrl('/9j/4AAQSk...'); // 'data:image/jpeg;base64,/9j/4AAQSk...'
+ * toDataUrl('https://cdn.example.com/a.png'); // unchanged
+ */
+export const toDataUrl = (
+  src?: string | null,
+  mimeType: string = 'image/jpeg',
+): string | undefined => {
+  if (!src) return undefined;
+  if (src.startsWith('data:') || src.startsWith('http')) return src;
+  return `data:${mimeType};base64,${src}`;
+};
+
 /** Convert File → Blob → ArrayBuffer */
 export const fileToArrayBuffer = (file: File | Blob): Promise<ArrayBuffer> =>
   new Promise((resolve, reject) => {

@@ -922,6 +922,48 @@ var getDisabledPastTime = (selectedDate) => () => {
   };
 };
 
+// src/utils/file-utils.ts
+var FILE_SIZE_UNITS = ["B", "KB", "MB", "GB", "TB"];
+var formatFileSize = (bytes, { decimals = 1, separator = "" } = {}) => {
+  if (!bytes || bytes <= 0) return `0${separator}${FILE_SIZE_UNITS[0]}`;
+  const exponent = Math.min(
+    Math.max(0, Math.floor(Math.log(bytes) / Math.log(1024))),
+    FILE_SIZE_UNITS.length - 1
+  );
+  const value = Number((bytes / 1024 ** exponent).toFixed(decimals));
+  return `${value}${separator}${FILE_SIZE_UNITS[exponent]}`;
+};
+var getFileExtension = (fileName, { uppercase = true } = {}) => {
+  if (!fileName) return "";
+  const dotIndex = fileName.lastIndexOf(".");
+  if (dotIndex <= 0 || dotIndex === fileName.length - 1) return "";
+  const extension = fileName.slice(dotIndex + 1);
+  return uppercase ? extension.toUpperCase() : extension.toLowerCase();
+};
+var downloadUrl = (url, filename) => {
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+var downloadBlob = (blob, filename) => {
+  const objectUrl = URL.createObjectURL(blob);
+  downloadUrl(objectUrl, filename);
+  URL.revokeObjectURL(objectUrl);
+};
+var fetchAndDownload = async (url, filename, { onError } = {}) => {
+  if (!url) return;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Download failed with status ${response.status}`);
+    downloadBlob(await response.blob(), filename);
+  } catch (error) {
+    onError?.(error);
+  }
+};
+
 // src/utils/phone-utils.ts
 var hasAzerbaijanCountryCode = (phoneNumber) => {
   const phone = String(phoneNumber).trim();
@@ -1479,6 +1521,11 @@ var extractBase64FromDataUrl = (dataUrl) => {
   const match = dataUrl.match(/^data:[\w/+]+;base64,(.+)$/);
   if (!match) throw new Error("Invalid data URL format");
   return match[1];
+};
+var toDataUrl = (src, mimeType = "image/jpeg") => {
+  if (!src) return void 0;
+  if (src.startsWith("data:") || src.startsWith("http")) return src;
+  return `data:${mimeType};base64,${src}`;
 };
 var fileToArrayBuffer = (file) => new Promise((resolve, reject2) => {
   const reader = new FileReader();
@@ -2533,12 +2580,15 @@ export {
   disabledBeforeDay,
   disabledOnOrBeforeDay,
   disabledOutsideRange,
+  downloadBlob,
+  downloadUrl,
   endOf,
   endsWith,
   entries,
   eqIgnoreCase,
   extractBase64FromDataUrl,
   fadeIn,
+  fetchAndDownload,
   fileToArrayBuffer,
   filterObject,
   first,
@@ -2551,6 +2601,7 @@ export {
   formatAzDateTime,
   formatDate,
   formatDateRange,
+  formatFileSize,
   formatIfIsoDate,
   formatIsoDate,
   formatRelativeTime,
@@ -2563,6 +2614,7 @@ export {
   getDaysDiffAsText,
   getDisabledPastTime,
   getEndpoint,
+  getFileExtension,
   getImageUrl,
   getInitials,
   getServerCookie,
@@ -2656,6 +2708,7 @@ export {
   timeId,
   tinyId,
   toCamelCase,
+  toDataUrl,
   toDative,
   toISOString,
   toKebabCase,

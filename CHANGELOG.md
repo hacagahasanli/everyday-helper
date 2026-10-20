@@ -4,7 +4,7 @@ All notable changes to this package are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)  
 and this project adheres to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
-## [Unreleased]
+## [1.4.0] - 2026-10-20
 
 ### Added
 
@@ -21,6 +21,9 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 - `DateLike` type so date helpers accept date-library objects (e.g. Dayjs)
 - `reformatDate` for converting a date string between formats
 - `computeAnchor` and `generateOrderedDateText` are now exported (previously internal to `getDaysDiffAsText`)
+- `formatFileSize`, `getFileExtension` for displaying file size and type
+- Browser download helpers `downloadUrl`, `downloadBlob`, `fetchAndDownload`
+- `toDataUrl` for turning raw Base64 into a data URL (inverse of `extractBase64FromDataUrl`)
 
 ### Changed
 
