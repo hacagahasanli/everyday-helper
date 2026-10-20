@@ -8,6 +8,11 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 ### Added
 
+- String utils `toStr`, `toStrWithFallback`, `toStrOrUndef`, `toStrWithSuffix` for null-safe value-to-string conversion
+- `boolLabel` for mapping booleans to labels (Azerbaijani defaults, overridable)
+- `toLocaleUpper` for locale-aware upper-casing (default `az`)
+- `prettifySnakeCase` for turning snake_case / UPPER_SNAKE_CASE values into title case (Unicode-aware)
+- Azerbaijani grammar helpers `ablativeSuffix`, `dativeSuffix`, `toDative`
 - `isIsoDateString`, `formatIsoDate`, `formatIfIsoDate` for formatting ISO date strings (date-only values read as local dates)
 - `formatAzDate`, `formatAzDateTime`, `formatAzDateShort` and `AZ_MONTHS` / `AZ_MONTHS_SHORT` constants for Azerbaijani date output
 - `combineDateAndTime` for merging a day and a time into one date-time string

@@ -1492,6 +1492,101 @@ declare const repeat: (str: string, count: number) => string;
 declare const slugify: (str: string) => string;
 declare function getInitials(name: string, limit?: number): string;
 declare const normalizeAzText: (text: string) => string;
+/**
+ * Converts a value to a string, treating `null`, `undefined` and `''` as empty.
+ *
+ * @param value - Value to convert
+ * @returns String representation, or `null` for empty values
+ */
+declare const toStr: (value: unknown) => string | null;
+/**
+ * Converts a value to a string, returning a fallback for `null`, `undefined` and `''`.
+ * Unlike a truthiness check, `0` and `false` are kept.
+ *
+ * @param value - Value to convert
+ * @param fallback - Text returned for empty values (default: "-")
+ * @returns String representation or the fallback
+ */
+declare const toStrWithFallback: (value: unknown, fallback?: string) => string;
+/**
+ * Converts a value to a string, returning `undefined` for `null` and `undefined`.
+ * Useful for optional form default values.
+ *
+ * @param value - Value to convert
+ * @returns String representation or undefined
+ */
+declare const toStrOrUndef: (value: unknown) => string | undefined;
+/**
+ * Appends a suffix to a value, returning `undefined` for `null` and `undefined`.
+ *
+ * @param value - Value to convert
+ * @param suffix - Suffix to append (e.g. " ay", "%")
+ * @returns Value with suffix, or undefined
+ */
+declare const toStrWithSuffix: (value: unknown, suffix: string) => string | undefined;
+interface BoolLabels {
+    yes: string;
+    no: string;
+}
+/**
+ * Maps a boolean to a human-readable label.
+ *
+ * @param value - Boolean value
+ * @param labels - Labels for true/false (default: { yes: "Bəli", no: "Xeyr" })
+ * @returns Matching label, or `null` for `null`/`undefined`
+ */
+declare const boolLabel: (value: boolean | null | undefined, labels?: Partial<BoolLabels>) => string | null;
+/**
+ * Converts a string to upper case using locale-specific rules
+ * (e.g. Azerbaijani/Turkish "i" → "İ" instead of "I").
+ *
+ * @param str - Input string
+ * @param locale - BCP 47 locale (default: "az")
+ * @returns Upper-cased string
+ */
+declare const toLocaleUpper: (str: string, locale?: string) => string;
+/**
+ * Converts a snake_case / UPPER_SNAKE_CASE value into space-separated title case.
+ * Unicode-aware, so non-Latin letters (ə, ş, ç, ...) are handled correctly.
+ *
+ * @param value - Input string (e.g. "IN_PROGRESS")
+ * @param locale - Optional BCP 47 locale for case conversion
+ * @returns Title-cased string (e.g. "In Progress"), or `''` for non-string input
+ */
+declare const prettifySnakeCase: (value: string, locale?: string) => string;
+/**
+ * Returns the Azerbaijani ablative case suffix ("-dan" / "-dən") by vowel harmony.
+ *
+ * @param word - Input word
+ * @returns "dan" for back-vowel words, "dən" otherwise
+ *
+ * @example
+ * ablativeSuffix('Bakı'); // 'dan'
+ * ablativeSuffix('Gəncə'); // 'dən'
+ */
+declare const ablativeSuffix: (word: string) => string;
+/**
+ * Returns the Azerbaijani dative case suffix ("-a" / "-ə") by vowel harmony.
+ *
+ * @param word - Input word
+ * @returns "a" for back-vowel words, "ə" otherwise
+ */
+declare const dativeSuffix: (word: string) => string;
+/**
+ * Puts a word into the Azerbaijani dative case, joined with a hyphen.
+ * Adds the buffer consonant "y" after a trailing vowel.
+ *
+ * @param word - Input word
+ * @returns Word with dative suffix
+ *
+ * @example
+ * toDative('Bakı'); // 'Bakı-ya'
+ * toDative('Gəncə'); // 'Gəncə-yə'
+ * toDative('Quba'); // 'Quba-ya'
+ * toDative('İsmayıllı'); // 'İsmayıllı-ya'
+ * toDative('Şəmkir'); // 'Şəmkir-ə'
+ */
+declare const toDative: (word: string) => string;
 
 /**
  * Converts a File or Blob object to a Base64-encoded data URL string.
@@ -1770,4 +1865,4 @@ declare const bounceIn: (order?: number, className?: string, style?: CSSProperti
 declare const AZ_MONTHS: readonly ["Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun", "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"];
 declare const AZ_MONTHS_SHORT: readonly ["Yan", "Fev", "Mar", "Apr", "May", "İyn", "İyl", "Avq", "Sen", "Okt", "Noy", "Dek"];
 
-export { AZ_MONTHS, AZ_MONTHS_SHORT, type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DateLike, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, type DisabledOutsideRangeParams, type DisabledTimeConfig, FormDataBuilder, type FormatLang, type GenerateOrderedDateTextModel, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, type UseListPaginationOptions, type UseListPaginationResult, type UseUrlPaginationOptions, type UseUrlPaginationResult, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, combineDateAndTime, compactArr, compactStr, compareDates, compose, computeAnchor, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, debounce, deepClone, deepFreeze, deepMerge, delay, difference, disabledBeforeDay, disabledOnOrBeforeDay, disabledOutsideRange, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatAzDate, formatAzDateShort, formatAzDateTime, formatDate, formatDateRange, formatIfIsoDate, formatIsoDate, formatRelativeTime, fromPairs, generateOrderedDateText, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getDisabledPastTime, getEndpoint, getImageUrl, getInitials, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isAfterToday, isBeforeToday, isBetweenDates, isBrowser, isDocumentAvailable, isEmpty, isEqual, isFuture, isIsoDateString, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, pushIf, rateLimit, reformatDate, reject, removeServerCookie, repeat, retry, reverse, reverseArr, safeCall, safeDocument, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toISOString, toKebabCase, toPascalCase, toSnakeCase, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useListPagination, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useUrlPagination, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
+export { AZ_MONTHS, AZ_MONTHS_SHORT, type BoolLabels, type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DateLike, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, type DisabledOutsideRangeParams, type DisabledTimeConfig, FormDataBuilder, type FormatLang, type GenerateOrderedDateTextModel, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, type UseListPaginationOptions, type UseListPaginationResult, type UseUrlPaginationOptions, type UseUrlPaginationResult, ablativeSuffix, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, boolLabel, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, combineDateAndTime, compactArr, compactStr, compareDates, compose, computeAnchor, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, dativeSuffix, debounce, deepClone, deepFreeze, deepMerge, delay, difference, disabledBeforeDay, disabledOnOrBeforeDay, disabledOutsideRange, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatAzDate, formatAzDateShort, formatAzDateTime, formatDate, formatDateRange, formatIfIsoDate, formatIsoDate, formatRelativeTime, fromPairs, generateOrderedDateText, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getDisabledPastTime, getEndpoint, getImageUrl, getInitials, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isAfterToday, isBeforeToday, isBetweenDates, isBrowser, isDocumentAvailable, isEmpty, isEqual, isFuture, isIsoDateString, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, prettifySnakeCase, pushIf, rateLimit, reformatDate, reject, removeServerCookie, repeat, retry, reverse, reverseArr, safeCall, safeDocument, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toDative, toISOString, toKebabCase, toLocaleUpper, toPascalCase, toSnakeCase, toStr, toStrOrUndef, toStrWithFallback, toStrWithSuffix, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useListPagination, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useUrlPagination, useWindowSize, values, withAzerbaijanCountryCode, without, zip };

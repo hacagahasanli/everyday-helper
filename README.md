@@ -786,6 +786,16 @@ const isEqual = eqIgnoreCase('Hello', 'hello'); // true
 - `startsWith/endsWith(str, search, ignoreCase)` - String checks
 - `repeat(str, count)` - Repeat string
 - `slugify(str)` - URL-friendly string
+- `toStr(value)` - String or `null` for `null`/`undefined`/`''`
+- `toStrWithFallback(value, fallback)` - String or fallback (default `'-'`), keeps `0`
+- `toStrOrUndef(value)` - String or `undefined` for `null`/`undefined`
+- `toStrWithSuffix(value, suffix)` - Value with suffix (e.g. `'5 ay'`) or `undefined`
+- `boolLabel(value, labels)` - Boolean to label (default `'Bəli'`/`'Xeyr'`)
+- `toLocaleUpper(str, locale)` - Locale-aware upper case (default `'az'`, `'i'` → `'İ'`)
+- `prettifySnakeCase(value, locale)` - `'IN_PROGRESS'` → `'In Progress'` (Unicode-aware)
+- `ablativeSuffix(word)` - Azerbaijani ablative suffix (`'dan'`/`'dən'`)
+- `dativeSuffix(word)` - Azerbaijani dative suffix (`'a'`/`'ə'`)
+- `toDative(word)` - Azerbaijani dative case (`'Bakı'` → `'Bakı-ya'`)
 
 ---
 
