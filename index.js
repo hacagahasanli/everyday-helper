@@ -1263,6 +1263,50 @@ var normalizeAzText = (text) => {
   };
   return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[əıüşçğüöƏIŞÇĞÜÖ]/g, (match) => charMap[match] || match).toLowerCase();
 };
+var isNil = (value) => value === null || value === void 0;
+var toStr = (value) => {
+  if (isNil(value) || value === "") return null;
+  return String(value);
+};
+var toStrWithFallback = (value, fallback = "-") => toStr(value) ?? fallback;
+var toStrOrUndef = (value) => {
+  if (isNil(value)) return void 0;
+  return String(value);
+};
+var toStrWithSuffix = (value, suffix) => {
+  if (isNil(value)) return void 0;
+  return `${value}${suffix}`;
+};
+var boolLabel = (value, labels = {}) => {
+  if (isNil(value)) return null;
+  const { yes = "B\u0259li", no = "Xeyr" } = labels;
+  return value ? yes : no;
+};
+var toLocaleUpper = (str, locale = "az") => str.toLocaleUpperCase(locale);
+var prettifySnakeCase = (value, locale) => {
+  if (typeof value !== "string") return "";
+  return value.toLocaleLowerCase(locale).replace(/_/g, " ").replace(
+    /(^|[^\p{L}\p{N}])(\p{L})/gu,
+    (_, separator, char) => separator + char.toLocaleUpperCase(locale)
+  );
+};
+var AZ_BACK_VOWELS = /* @__PURE__ */ new Set(["a", "\u0131", "o", "u"]);
+var AZ_FRONT_VOWELS = /* @__PURE__ */ new Set(["e", "\u0259", "i", "\xF6", "\xFC"]);
+var isAzVowel = (char) => AZ_BACK_VOWELS.has(char) || AZ_FRONT_VOWELS.has(char);
+var isAzBackVowelWord = (word) => {
+  for (let i = word.length - 1; i >= 0; i--) {
+    const char = word[i].toLocaleLowerCase("az");
+    if (isAzVowel(char)) return AZ_BACK_VOWELS.has(char);
+  }
+  return true;
+};
+var hasAzTrailingVowel = (word) => isAzVowel(word.trim().slice(-1).toLocaleLowerCase("az"));
+var ablativeSuffix = (word) => isAzBackVowelWord(word) ? "dan" : "d\u0259n";
+var dativeSuffix = (word) => isAzBackVowelWord(word) ? "a" : "\u0259";
+var toDative = (word) => {
+  const suffix = dativeSuffix(word);
+  return hasAzTrailingVowel(word) ? `${word}-y${suffix}` : `${word}-${suffix}`;
+};
 
 // src/utils/convert-utils.ts
 var convertFileToBase64 = (file) => new Promise((resolve, reject2) => {
@@ -2295,12 +2339,14 @@ export {
   DateFormats,
   FormDataBuilder,
   SearchMode,
+  ablativeSuffix,
   addAsteriskIf,
   addToDate,
   advancedSearch,
   animate,
   areAllValuesComplete,
   average,
+  boolLabel,
   bounceIn,
   capitalize,
   capitalizeWords,
@@ -2324,6 +2370,7 @@ export {
   createServerCookieManager,
   createStorage,
   curry,
+  dativeSuffix,
   debounce,
   deepClone,
   deepFreeze,
@@ -2409,6 +2456,7 @@ export {
   partial,
   partition,
   pick,
+  prettifySnakeCase,
   pushIf,
   rateLimit,
   reject,
@@ -2441,10 +2489,16 @@ export {
   timeId,
   tinyId,
   toCamelCase,
+  toDative,
   toISOString,
   toKebabCase,
+  toLocaleUpper,
   toPascalCase,
   toSnakeCase,
+  toStr,
+  toStrOrUndef,
+  toStrWithFallback,
+  toStrWithSuffix,
   toUnixTimestamp,
   toUpperSnakeCase,
   trim,
