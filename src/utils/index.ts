@@ -1,6 +1,7 @@
 export * from './browser';
 export * from './api-utils';
 export * from './date-utils';
+export * from './file-utils';
 export * from './phone-utils';
 export * from './array-utils';
 export * from './common-utils';

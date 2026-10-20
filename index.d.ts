@@ -669,6 +669,66 @@ declare const compareDates: (date1: DateInput, date2: DateInput) => -1 | 0 | 1 |
  */
 declare function getDaysDiffAsText({ options, endDate, startDate, }: DaysToYMDParams): DaysToYMDOutputModel | string;
 
+interface FormatFileSizeOptions {
+    decimals?: number;
+    separator?: string;
+}
+/**
+ * Formats a byte count into a human-readable size (1024-based).
+ *
+ * @param bytes - Size in bytes
+ * @param options - `decimals` (default: 1) and `separator` between value and unit (default: "")
+ * @returns e.g. "1.5KB", or "0B" for empty / non-positive values
+ *
+ * @example
+ * formatFileSize(1536); // '1.5KB'
+ * formatFileSize(1048576, { separator: ' ' }); // '1 MB'
+ */
+declare const formatFileSize: (bytes?: number | null, { decimals, separator }?: FormatFileSizeOptions) => string;
+interface GetFileExtensionOptions {
+    uppercase?: boolean;
+}
+/**
+ * Returns the extension of a file name.
+ *
+ * @param fileName - File name or path
+ * @param options - `uppercase` (default: true)
+ * @returns e.g. "PDF", or "" when the name has no extension
+ *
+ * @example
+ * getFileExtension('report.final.pdf'); // 'PDF'
+ * getFileExtension('photo.JPG', { uppercase: false }); // 'jpg'
+ * getFileExtension('README'); // ''
+ */
+declare const getFileExtension: (fileName?: string | null, { uppercase }?: GetFileExtensionOptions) => string;
+/**
+ * Triggers a browser download for a URL by clicking a temporary `<a download>` link.
+ *
+ * @param url - File URL (http, data or object URL)
+ * @param filename - Suggested file name
+ */
+declare const downloadUrl: (url: string, filename: string) => void;
+/**
+ * Triggers a browser download for a Blob (e.g. an exported PDF or XLSX).
+ * The temporary object URL is revoked afterwards.
+ *
+ * @param blob - File content
+ * @param filename - Suggested file name
+ */
+declare const downloadBlob: (blob: Blob, filename: string) => void;
+interface FetchAndDownloadOptions {
+    onError?: (error: unknown) => void;
+}
+/**
+ * Fetches a URL and downloads the response as a file. Useful for cross-origin files,
+ * where a plain `<a download>` would open the file instead of saving it.
+ *
+ * @param url - File URL
+ * @param filename - Suggested file name
+ * @param options - `onError` is called when the request fails or returns a non-2xx status
+ */
+declare const fetchAndDownload: (url: string, filename: string, { onError }?: FetchAndDownloadOptions) => Promise<void>;
+
 /** Checks if a phone number already starts with Azerbaijan country code (+994 or 994) */
 declare const hasAzerbaijanCountryCode: (phoneNumber: string | number) => boolean;
 /** Adds Azerbaijan country code (+994) if it's missing */
@@ -1362,6 +1422,19 @@ declare function convertBase64ToFile(base64: string, fileName: string, mimeType:
  * @returns The base64-encoded part only
  */
 declare const extractBase64FromDataUrl: (dataUrl: string) => string;
+/**
+ * Turns a raw Base64 string into a data URL. Values that are already a data URL
+ * or an http(s) URL are returned unchanged. Inverse of `extractBase64FromDataUrl`.
+ *
+ * @param src - Raw Base64, data URL or http(s) URL
+ * @param mimeType - MIME type for raw Base64 (default: "image/jpeg")
+ * @returns Data URL / URL, or undefined for empty values
+ *
+ * @example
+ * toDataUrl('/9j/4AAQSk...'); // 'data:image/jpeg;base64,/9j/4AAQSk...'
+ * toDataUrl('https://cdn.example.com/a.png'); // unchanged
+ */
+declare const toDataUrl: (src?: string | null, mimeType?: string) => string | undefined;
 /** Convert File → Blob → ArrayBuffer */
 declare const fileToArrayBuffer: (file: File | Blob) => Promise<ArrayBuffer>;
 
@@ -1585,4 +1658,4 @@ declare const bounceIn: (order?: number, className?: string, style?: CSSProperti
     style: CSSProperties;
 };
 
-export { type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, FormDataBuilder, type FormatLang, type GenerateOrderedDateTextModel, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, type UseListPaginationOptions, type UseListPaginationResult, type UseUrlPaginationOptions, type UseUrlPaginationResult, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, compactArr, compactStr, compareDates, compose, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, debounce, deepClone, deepFreeze, deepMerge, delay, difference, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatDate, formatDateRange, formatRelativeTime, fromPairs, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getEndpoint, getImageUrl, getInitials, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isBetweenDates, isBrowser, isDocumentAvailable, isEmpty, isEqual, isFuture, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, pushIf, rateLimit, reject, removeServerCookie, repeat, retry, reverse, reverseArr, safeCall, safeDocument, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toISOString, toKebabCase, toPascalCase, toSnakeCase, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useListPagination, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useUrlPagination, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
+export { type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, type FetchAndDownloadOptions, FormDataBuilder, type FormatFileSizeOptions, type FormatLang, type GenerateOrderedDateTextModel, type GetFileExtensionOptions, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, type UseListPaginationOptions, type UseListPaginationResult, type UseUrlPaginationOptions, type UseUrlPaginationResult, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, compactArr, compactStr, compareDates, compose, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, debounce, deepClone, deepFreeze, deepMerge, delay, difference, downloadBlob, downloadUrl, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fetchAndDownload, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatDate, formatDateRange, formatFileSize, formatRelativeTime, fromPairs, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getEndpoint, getFileExtension, getImageUrl, getInitials, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isBetweenDates, isBrowser, isDocumentAvailable, isEmpty, isEqual, isFuture, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, pushIf, rateLimit, reject, removeServerCookie, repeat, retry, reverse, reverseArr, safeCall, safeDocument, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toDataUrl, toISOString, toKebabCase, toPascalCase, toSnakeCase, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useListPagination, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useUrlPagination, useWindowSize, values, withAzerbaijanCountryCode, without, zip };

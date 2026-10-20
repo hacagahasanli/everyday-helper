@@ -4,6 +4,14 @@ All notable changes to this package are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)  
 and this project adheres to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [Unreleased]
+
+### Added
+
+- `formatFileSize`, `getFileExtension` for displaying file size and type
+- Browser download helpers `downloadUrl`, `downloadBlob`, `fetchAndDownload`
+- `toDataUrl` for turning raw Base64 into a data URL (inverse of `extractBase64FromDataUrl`)
+
 ## [1.3.13] - 2026-09-04
 
 ### Added

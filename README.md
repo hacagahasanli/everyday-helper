@@ -1030,6 +1030,7 @@ import {
   convertBase64ToFile,
   extractBase64FromDataUrl,
   fileToArrayBuffer,
+  toDataUrl,
 } from 'everyday-helper/utils';
 
 // File to Base64
@@ -1044,7 +1045,42 @@ const pureBase64 = extractBase64FromDataUrl(dataUrl);
 
 // File to ArrayBuffer
 const buffer = await fileToArrayBuffer(file);
+
+// Raw Base64 to data URL (data/http URLs are returned unchanged)
+const photoSrc = toDataUrl(person.photo); // 'data:image/jpeg;base64,...'
 ```
+
+---
+
+### File Utils
+
+File size/extension formatting and browser downloads.
+
+```tsx
+import {
+  downloadUrl,
+  downloadBlob,
+  formatFileSize,
+  fetchAndDownload,
+  getFileExtension,
+} from 'everyday-helper/utils';
+
+formatFileSize(1536); // '1.5KB'
+formatFileSize(1048576, { separator: ' ' }); // '1 MB'
+getFileExtension('report.pdf'); // 'PDF'
+
+downloadUrl(fileUrl, 'report.pdf');
+downloadBlob(exportBlob, 'export.xlsx');
+await fetchAndDownload(imageUrl, 'photo.png', { onError: () => notify('Download failed') });
+```
+
+**Available functions:**
+
+- `formatFileSize(bytes, { decimals, separator })` - Human-readable size (1024-based)
+- `getFileExtension(fileName, { uppercase })` - Extension or `''`
+- `downloadUrl(url, filename)` - Download via a temporary `<a download>` link
+- `downloadBlob(blob, filename)` - Download a Blob through an object URL (revoked afterwards)
+- `fetchAndDownload(url, filename, { onError })` - Fetch a URL and download the response (for cross-origin files)
 
 ---
 
