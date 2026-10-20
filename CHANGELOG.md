@@ -4,6 +4,16 @@ All notable changes to this package are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)  
 and this project adheres to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [Unreleased]
+
+### Added
+
+- String utils `toStr`, `toStrWithFallback`, `toStrOrUndef`, `toStrWithSuffix` for null-safe value-to-string conversion
+- `boolLabel` for mapping booleans to labels (Azerbaijani defaults, overridable)
+- `toLocaleUpper` for locale-aware upper-casing (default `az`)
+- `prettifySnakeCase` for turning snake_case / UPPER_SNAKE_CASE values into title case (Unicode-aware)
+- Azerbaijani grammar helpers `ablativeSuffix`, `dativeSuffix`, `toDative`
+
 ## [1.3.13] - 2026-09-04
 
 ### Added

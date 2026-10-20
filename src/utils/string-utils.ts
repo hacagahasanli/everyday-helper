@@ -394,3 +394,162 @@ export function getInitials(name: string, limit = 2): string {
     .replace(/[əıüşçğüöƏIŞÇĞÜÖ]/g, (match) => charMap[match] || match)
     .toLowerCase();
 };
+
+const isNil = (value: unknown): value is null | undefined => value === null || value === undefined;
+
+/**
+ * Converts a value to a string, treating `null`, `undefined` and `''` as empty.
+ *
+ * @param value - Value to convert
+ * @returns String representation, or `null` for empty values
+ */
+export const toStr = (value: unknown): string | null => {
+  if (isNil(value) || value === '') return null;
+  return String(value);
+};
+
+/**
+ * Converts a value to a string, returning a fallback for `null`, `undefined` and `''`.
+ * Unlike a truthiness check, `0` and `false` are kept.
+ *
+ * @param value - Value to convert
+ * @param fallback - Text returned for empty values (default: "-")
+ * @returns String representation or the fallback
+ */
+export const toStrWithFallback = (value: unknown, fallback: string = '-'): string =>
+  toStr(value) ?? fallback;
+
+/**
+ * Converts a value to a string, returning `undefined` for `null` and `undefined`.
+ * Useful for optional form default values.
+ *
+ * @param value - Value to convert
+ * @returns String representation or undefined
+ */
+export const toStrOrUndef = (value: unknown): string | undefined => {
+  if (isNil(value)) return undefined;
+  return String(value);
+};
+
+/**
+ * Appends a suffix to a value, returning `undefined` for `null` and `undefined`.
+ *
+ * @param value - Value to convert
+ * @param suffix - Suffix to append (e.g. " ay", "%")
+ * @returns Value with suffix, or undefined
+ */
+export const toStrWithSuffix = (value: unknown, suffix: string): string | undefined => {
+  if (isNil(value)) return undefined;
+  return `${value}${suffix}`;
+};
+
+export interface BoolLabels {
+  yes: string;
+  no: string;
+}
+
+/**
+ * Maps a boolean to a human-readable label.
+ *
+ * @param value - Boolean value
+ * @param labels - Labels for true/false (default: { yes: "Bəli", no: "Xeyr" })
+ * @returns Matching label, or `null` for `null`/`undefined`
+ */
+export const boolLabel = (
+  value: boolean | null | undefined,
+  labels: Partial<BoolLabels> = {},
+): string | null => {
+  if (isNil(value)) return null;
+
+  const { yes = 'Bəli', no = 'Xeyr' } = labels;
+
+  return value ? yes : no;
+};
+
+/**
+ * Converts a string to upper case using locale-specific rules
+ * (e.g. Azerbaijani/Turkish "i" → "İ" instead of "I").
+ *
+ * @param str - Input string
+ * @param locale - BCP 47 locale (default: "az")
+ * @returns Upper-cased string
+ */
+export const toLocaleUpper = (str: string, locale: string = 'az'): string =>
+  str.toLocaleUpperCase(locale);
+
+/**
+ * Converts a snake_case / UPPER_SNAKE_CASE value into space-separated title case.
+ * Unicode-aware, so non-Latin letters (ə, ş, ç, ...) are handled correctly.
+ *
+ * @param value - Input string (e.g. "IN_PROGRESS")
+ * @param locale - Optional BCP 47 locale for case conversion
+ * @returns Title-cased string (e.g. "In Progress"), or `''` for non-string input
+ */
+export const prettifySnakeCase = (value: string, locale?: string): string => {
+  if (typeof value !== 'string') return '';
+
+  return value
+    .toLocaleLowerCase(locale)
+    .replace(/_/g, ' ')
+    .replace(
+      /(^|[^\p{L}\p{N}])(\p{L})/gu,
+      (_, separator: string, char: string) => separator + char.toLocaleUpperCase(locale),
+    );
+};
+
+const AZ_BACK_VOWELS = new Set(['a', 'ı', 'o', 'u']);
+const AZ_FRONT_VOWELS = new Set(['e', 'ə', 'i', 'ö', 'ü']);
+
+const isAzVowel = (char: string): boolean => AZ_BACK_VOWELS.has(char) || AZ_FRONT_VOWELS.has(char);
+
+const isAzBackVowelWord = (word: string): boolean => {
+  for (let i = word.length - 1; i >= 0; i--) {
+    const char = word[i].toLocaleLowerCase('az');
+    if (isAzVowel(char)) return AZ_BACK_VOWELS.has(char);
+  }
+
+  return true;
+};
+
+const hasAzTrailingVowel = (word: string): boolean =>
+  isAzVowel(word.trim().slice(-1).toLocaleLowerCase('az'));
+
+/**
+ * Returns the Azerbaijani ablative case suffix ("-dan" / "-dən") by vowel harmony.
+ *
+ * @param word - Input word
+ * @returns "dan" for back-vowel words, "dən" otherwise
+ *
+ * @example
+ * ablativeSuffix('Bakı'); // 'dan'
+ * ablativeSuffix('Gəncə'); // 'dən'
+ */
+export const ablativeSuffix = (word: string): string => (isAzBackVowelWord(word) ? 'dan' : 'dən');
+
+/**
+ * Returns the Azerbaijani dative case suffix ("-a" / "-ə") by vowel harmony.
+ *
+ * @param word - Input word
+ * @returns "a" for back-vowel words, "ə" otherwise
+ */
+export const dativeSuffix = (word: string): string => (isAzBackVowelWord(word) ? 'a' : 'ə');
+
+/**
+ * Puts a word into the Azerbaijani dative case, joined with a hyphen.
+ * Adds the buffer consonant "y" after a trailing vowel.
+ *
+ * @param word - Input word
+ * @returns Word with dative suffix
+ *
+ * @example
+ * toDative('Bakı'); // 'Bakı-ya'
+ * toDative('Gəncə'); // 'Gəncə-yə'
+ * toDative('Quba'); // 'Quba-ya'
+ * toDative('İsmayıllı'); // 'İsmayıllı-ya'
+ * toDative('Şəmkir'); // 'Şəmkir-ə'
+ */
+export const toDative = (word: string): string => {
+  const suffix = dativeSuffix(word);
+
+  return hasAzTrailingVowel(word) ? `${word}-y${suffix}` : `${word}-${suffix}`;
+};
