@@ -73,6 +73,23 @@ export const generateQuery = (query: Record<string, any>): string => {
 };
 
 /**
+ * Fills `:param` placeholders in a route/URL template.
+ *
+ * @param url - Template such as "/cases/:id/files/:fileId"
+ * @param params - Values for every placeholder
+ * @returns URL with placeholders replaced
+ * @throws {Error} When a placeholder has no matching param
+ *
+ * @example
+ * replaceUrlParams('/cases/:id', { id: 5 }); // '/cases/5'
+ */
+export const replaceUrlParams = (url: string, params: Record<string, string | number>): string =>
+  url.replace(/:(\w+)/g, (_, key: string) => {
+    if (!(key in params)) throw new Error(`Missing parameter: ${key}`);
+    return String(params[key]);
+  });
+
+/**
  * Checks if the user is logged in by verifying
  * the presence of an access token cookie.
  *

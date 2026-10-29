@@ -404,6 +404,7 @@ var safeDocument = () => isDocumentAvailable() ? document : void 0;
 function isNulOrUndefined(v) {
   return v === null || v === void 0;
 }
+var isEmptyValue = (value) => value === "" || value === null || value === void 0;
 function isEmpty(o) {
   if (Number.isNaN(o)) return true;
   if (isNulOrUndefined(o)) return true;
@@ -447,6 +448,10 @@ var generateQuery = (query) => {
   });
   return searchParams.toString();
 };
+var replaceUrlParams = (url, params) => url.replace(/:(\w+)/g, (_, key) => {
+  if (!(key in params)) throw new Error(`Missing parameter: ${key}`);
+  return String(params[key]);
+});
 var isLoggedIn = (name) => {
   return !!CookieManager.get(name);
 };
@@ -2435,23 +2440,30 @@ function useUrlPagination({
 }
 
 // src/hooks/useDownloadFile.ts
+var MIME_EXTENSIONS = {
+  "application/pdf": "pdf",
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/gif": "gif",
+  "image/webp": "webp",
+  "image/svg+xml": "svg"
+};
+var DEFAULT_EXTENSION = "png";
 var useDownloadFile = ({
-  errorMessage = "Endirm\u0259 u\u011Fursuz oldu."
-}) => {
+  errorMessage = "Endirm\u0259 u\u011Fursuz oldu.",
+  onError
+} = {}) => {
   const downloadImage = async (src, filename) => {
     try {
       const response = await fetch(src);
+      if (!response.ok) throw new Error(`Download failed with status ${response.status}`);
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${filename.replace(/\s+/g, "_")}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch {
-      alert(errorMessage);
+      const mimeType = blob.type.split(";")[0].trim();
+      const extension = MIME_EXTENSIONS[mimeType] ?? DEFAULT_EXTENSION;
+      downloadBlob(blob, `${filename.replace(/\s+/g, "_")}.${extension}`);
+    } catch (error) {
+      if (onError) onError(error);
+      else alert(errorMessage);
     }
   };
   return { downloadImage };
@@ -2680,6 +2692,7 @@ export {
   isBrowser,
   isDocumentAvailable,
   isEmpty,
+  isEmptyValue,
   isEqual,
   isFuture,
   isIsoDateString,
@@ -2730,6 +2743,7 @@ export {
   reject,
   removeServerCookie,
   repeat,
+  replaceUrlParams,
   retry,
   reverse,
   reverseArr,

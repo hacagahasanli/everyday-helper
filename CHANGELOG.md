@@ -4,6 +4,20 @@ All notable changes to this package are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)  
 and this project adheres to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [1.6.0] - 2026-10-29
+
+### Added
+
+- `replaceUrlParams` for filling `:param` placeholders in route/URL templates
+- `isEmptyValue` type guard for empty form values (`''`, `null`, `undefined`)
+- `useDownloadFile` accepts an optional `onError` callback
+
+### Changed
+
+- `useDownloadFile` takes the file extension from the response MIME type (pdf, png, jpg, gif, webp, svg; default png) instead of always saving `.png`
+- `useDownloadFile` treats non-2xx responses as errors instead of saving the error body
+- `useDownloadFile` options are optional, so `useDownloadFile()` works without arguments
+
 ## [1.5.0] - 2026-10-29
 
 ### Added

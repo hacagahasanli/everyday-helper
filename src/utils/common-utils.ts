@@ -8,6 +8,20 @@ export function isNulOrUndefined(v: unknown): boolean {
 }
 
 /**
+ * Checks if a value is an empty form value: `''`, `null` or `undefined`.
+ * Unlike `isEmpty`, `0`, `false`, `[]` and `{}` are not considered empty.
+ *
+ * @param value - Value to check
+ * @returns true for `''`, `null` or `undefined` (narrows the type)
+ *
+ * @example
+ * isEmptyValue(''); // true
+ * isEmptyValue(0); // false
+ */
+export const isEmptyValue = (value: unknown): value is '' | null | undefined =>
+  value === '' || value === null || value === undefined;
+
+/**
  * Checks if a value is "empty".
  * Empty means:
  * - null or undefined

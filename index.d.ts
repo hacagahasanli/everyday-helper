@@ -465,9 +465,23 @@ interface UseUrlPaginationResult {
 }
 declare function useUrlPagination({ pageParam, pageSizeParam, initialPage, initialPageSize, }?: UseUrlPaginationOptions): UseUrlPaginationResult;
 
-declare const useDownloadFile: ({ errorMessage, }: {
-    errorMessage: string;
-}) => {
+interface UseDownloadFileOptions {
+    errorMessage?: string;
+    onError?: (error: unknown) => void;
+}
+/**
+ * Downloads a file from a URL. The extension is taken from the response MIME type
+ * (pdf, png, jpg, gif, webp, svg), falling back to "png".
+ *
+ * @param options - `onError` handles failures (non-2xx response or network error);
+ *   without it, `errorMessage` is shown via `alert` (default: "Endirmə uğursuz oldu.")
+ * @returns `downloadImage(src, filename)` — spaces in `filename` become underscores
+ *
+ * @example
+ * const { downloadImage } = useDownloadFile({ onError: () => toast.error('Xəta') });
+ * downloadImage(fileUrl, 'Qərar arayışı'); // saves "Qərar_arayışı.pdf" for a PDF response
+ */
+declare const useDownloadFile: ({ errorMessage, onError, }?: UseDownloadFileOptions) => {
     downloadImage: (src: string, filename: string) => Promise<void>;
 };
 
@@ -536,6 +550,18 @@ declare function getEndpoint(role: string, feature: keyof SharedFeatures, shared
  * @returns URL-encoded query string
  */
 declare const generateQuery: (query: Record<string, any>) => string;
+/**
+ * Fills `:param` placeholders in a route/URL template.
+ *
+ * @param url - Template such as "/cases/:id/files/:fileId"
+ * @param params - Values for every placeholder
+ * @returns URL with placeholders replaced
+ * @throws {Error} When a placeholder has no matching param
+ *
+ * @example
+ * replaceUrlParams('/cases/:id', { id: 5 }); // '/cases/5'
+ */
+declare const replaceUrlParams: (url: string, params: Record<string, string | number>) => string;
 /**
  * Checks if the user is logged in by verifying
  * the presence of an access token cookie.
@@ -1253,6 +1279,18 @@ declare const toNumberOrUndef: (value?: string | number | null) => number | unde
  * @returns true if null or undefined, else false
  */
 declare function isNulOrUndefined(v: unknown): boolean;
+/**
+ * Checks if a value is an empty form value: `''`, `null` or `undefined`.
+ * Unlike `isEmpty`, `0`, `false`, `[]` and `{}` are not considered empty.
+ *
+ * @param value - Value to check
+ * @returns true for `''`, `null` or `undefined` (narrows the type)
+ *
+ * @example
+ * isEmptyValue(''); // true
+ * isEmptyValue(0); // false
+ */
+declare const isEmptyValue: (value: unknown) => value is "" | null | undefined;
 /**
  * Checks if a value is "empty".
  * Empty means:
@@ -2062,4 +2100,4 @@ declare const getRowNumber: ({ index, page, size, totalCount, defaultSize, }: Ge
 declare const AZ_MONTHS: readonly ["Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun", "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"];
 declare const AZ_MONTHS_SHORT: readonly ["Yan", "Fev", "Mar", "Apr", "May", "İyn", "İyl", "Avq", "Sen", "Okt", "Noy", "Dek"];
 
-export { AZ_MONTHS, AZ_MONTHS_SHORT, type BoolLabels, type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DateLike, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, type DisabledOutsideRangeParams, type DisabledTimeConfig, type FetchAndDownloadOptions, type FindLabelOptions, FormDataBuilder, type FormatFileSizeOptions, type FormatLang, type FormatNumberOptions, type GenerateOrderedDateTextModel, type GetFileExtensionOptions, type GetRowNumberParams, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type SelectOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, type ToOptionsKeys, type UseListPaginationOptions, type UseListPaginationResult, type UseUrlPaginationOptions, type UseUrlPaginationResult, ablativeSuffix, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, boolLabel, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, clamp, cleanObject, clone, cn, combineDateAndTime, compactArr, compactStr, compareDates, compose, computeAnchor, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, dativeSuffix, debounce, deepClone, deepFreeze, deepMerge, delay, difference, disabledBeforeDay, disabledOnOrBeforeDay, disabledOutsideRange, downloadBlob, downloadUrl, endOf, endsWith, entries, entriesToOptions, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fetchAndDownload, fileToArrayBuffer, filterObject, findLabel, first, firstSeveral, flatten, flattenDeep, flip, formatAzDate, formatAzDateShort, formatAzDateTime, formatDate, formatDateRange, formatFileSize, formatIfIsoDate, formatIsoDate, formatNumber, formatRelativeTime, fromPairs, generateOrderedDateText, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getDisabledPastTime, getEndpoint, getFileExtension, getImageUrl, getInitials, getRowNumber, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isAfterToday, isBeforeToday, isBetweenDates, isBrowser, isDocumentAvailable, isEmpty, isEqual, isFuture, isIsoDateString, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, prettifySnakeCase, pushIf, rateLimit, reformatDate, reject, removeServerCookie, repeat, retry, reverse, reverseArr, safeCall, safeDocument, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toDataUrl, toDative, toISOString, toKebabCase, toLocaleUpper, toNumberOrUndef, toOptions, toPascalCase, toSnakeCase, toStr, toStrOrUndef, toStrWithFallback, toStrWithSuffix, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useListPagination, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useUrlPagination, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
+export { AZ_MONTHS, AZ_MONTHS_SHORT, type BoolLabels, type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DateLike, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, type DisabledOutsideRangeParams, type DisabledTimeConfig, type FetchAndDownloadOptions, type FindLabelOptions, FormDataBuilder, type FormatFileSizeOptions, type FormatLang, type FormatNumberOptions, type GenerateOrderedDateTextModel, type GetFileExtensionOptions, type GetRowNumberParams, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type SelectOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, type ToOptionsKeys, type UseDownloadFileOptions, type UseListPaginationOptions, type UseListPaginationResult, type UseUrlPaginationOptions, type UseUrlPaginationResult, ablativeSuffix, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, boolLabel, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, clamp, cleanObject, clone, cn, combineDateAndTime, compactArr, compactStr, compareDates, compose, computeAnchor, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, dativeSuffix, debounce, deepClone, deepFreeze, deepMerge, delay, difference, disabledBeforeDay, disabledOnOrBeforeDay, disabledOutsideRange, downloadBlob, downloadUrl, endOf, endsWith, entries, entriesToOptions, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fetchAndDownload, fileToArrayBuffer, filterObject, findLabel, first, firstSeveral, flatten, flattenDeep, flip, formatAzDate, formatAzDateShort, formatAzDateTime, formatDate, formatDateRange, formatFileSize, formatIfIsoDate, formatIsoDate, formatNumber, formatRelativeTime, fromPairs, generateOrderedDateText, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getDisabledPastTime, getEndpoint, getFileExtension, getImageUrl, getInitials, getRowNumber, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isAfterToday, isBeforeToday, isBetweenDates, isBrowser, isDocumentAvailable, isEmpty, isEmptyValue, isEqual, isFuture, isIsoDateString, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, prettifySnakeCase, pushIf, rateLimit, reformatDate, reject, removeServerCookie, repeat, replaceUrlParams, retry, reverse, reverseArr, safeCall, safeDocument, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toDataUrl, toDative, toISOString, toKebabCase, toLocaleUpper, toNumberOrUndef, toOptions, toPascalCase, toSnakeCase, toStr, toStrOrUndef, toStrWithFallback, toStrWithSuffix, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useListPagination, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useUrlPagination, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
