@@ -324,13 +324,13 @@ function SearchBar() {
 
 ### useDownloadFile
 
-Provides a simple way to download images from URLs.
+Downloads a file from a URL. The extension comes from the response MIME type.
 
 ```tsx
 import { useDownloadFile } from 'everyday-helper/hooks';
 
 function ImageGallery() {
-  const { downloadImage } = useDownloadFile();
+  const { downloadImage } = useDownloadFile({ onError: () => toast.error('Download failed') });
 
   return (
     <button onClick={() => downloadImage('/api/image.jpg', 'my-image')}>Download Image</button>
@@ -338,9 +338,14 @@ function ImageGallery() {
 }
 ```
 
+**Options:**
+
+- `onError(error)` - Called on a network error or non-2xx response
+- `errorMessage` - Shown via `alert` when `onError` is not given (default: `'Endirmə uğursuz oldu.'`)
+
 **Methods:**
 
-- `downloadImage(src, filename)` - Downloads image as PNG file
+- `downloadImage(src, filename)` - Saves the file as `filename` (spaces → `_`) with an extension from the MIME type (pdf, png, jpg, gif, webp, svg; default png)
 
 ---
 
@@ -1023,7 +1028,7 @@ const fetchData = retry(
 General-purpose utility functions.
 
 ```tsx
-import { isEmpty, isNotEmpty, isNulOrUndefined, getImageUrl } from 'everyday-helper/utils';
+import { isEmpty, isNotEmpty, isNulOrUndefined, isEmptyValue, getImageUrl } from 'everyday-helper/utils';
 
 // Check empty values
 if (isEmpty(value)) {
@@ -1037,6 +1042,11 @@ if (isNotEmpty(value)) {
 // Null/undefined checks
 if (isNulOrUndefined(value)) {
   // value is null or undefined
+}
+
+// Empty form value: '', null or undefined (0, false, [] and {} are not empty)
+if (isEmptyValue(value)) {
+  // value is narrowed to '' | null | undefined
 }
 
 // Generate image URLs
@@ -1175,7 +1185,7 @@ getRowNumber({ index: 0, page: 2, size: 10, totalCount: 23 }); // 13 (descending
 API and HTTP-related utilities.
 
 ```tsx
-import { getEndpoint, generateQuery, isLoggedIn } from 'everyday-helper/utils';
+import { getEndpoint, generateQuery, replaceUrlParams, isLoggedIn } from 'everyday-helper/utils';
 
 // Get role-based endpoints
 const endpoint = getEndpoint('admin', 'users', sharedFeatures);
@@ -1188,6 +1198,10 @@ const query = generateQuery({
   empty: '',
 });
 // 'page=1&search=john&filters=active&filters=verified'
+
+// Fill route params (throws when a param is missing)
+const path = replaceUrlParams('/cases/:id/files/:fileId', { id: 5, fileId: 'abc' });
+// '/cases/5/files/abc'
 
 // Check login status
 if (isLoggedIn('access_token')) {
