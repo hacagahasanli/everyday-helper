@@ -1150,6 +1150,35 @@ function sortBy(arr, keyOrFn, order = "asc") {
   });
 }
 
+// src/utils/option-utils.ts
+var entriesToOptions = (map, getExtra) => Object.entries(map).map(
+  ([value, label]) => ({ value, label, ...getExtra?.(value, label) })
+);
+var toOptions = (items, { labelKey, valueKey }) => items.map((item) => ({
+  label: String(item[labelKey]),
+  value: String(item[valueKey])
+}));
+var findLabel = (list, value, {
+  valueKey = "value",
+  labelKey = "label",
+  fallback = null
+} = {}) => {
+  if (value === null || value === void 0) return null;
+  const match = list?.find((item) => String(item[valueKey]) === String(value));
+  const label = match?.[labelKey];
+  return label === null || label === void 0 ? fallback : String(label);
+};
+
+// src/utils/number-utils.ts
+var clamp = (value, min2, max2) => Math.max(min2, Math.min(value, max2));
+var formatNumber = (value, { locale = "az-AZ", ...options } = {}) => new Intl.NumberFormat(locale, options).format(value);
+var toNumberOrUndef = (value) => {
+  if (value === null || value === void 0) return void 0;
+  if (typeof value === "string" && value.trim() === "") return void 0;
+  const parsed = typeof value === "number" ? value : Number(value);
+  return Number.isNaN(parsed) ? void 0 : parsed;
+};
+
 // src/utils/object-utils.ts
 function pick(obj, keys2) {
   const result = {};
@@ -1733,6 +1762,21 @@ var slideInLeft = (order, className, style) => animate({ type: "slide-in-left", 
 var slideInRight = (order, className, style) => animate({ type: "slide-in-right", order, className, style });
 var scaleIn = (order, className, style) => animate({ type: "scale-in", order, className, style });
 var bounceIn = (order, className, style) => animate({ type: "bounce-in", order, className, style });
+
+// src/utils/pagination-utils.ts
+var getRowNumber = ({
+  index,
+  page,
+  size,
+  totalCount,
+  defaultSize = 10
+}) => {
+  const currentPage = page && page > 0 ? page : 1;
+  const pageSize = size && size > 0 ? size : defaultSize;
+  const positionFromStart = (currentPage - 1) * pageSize + index;
+  if (totalCount === void 0) return positionFromStart + 1;
+  return totalCount - positionFromStart;
+};
 
 // src/lib/advanced-search.ts
 var SearchMode = /* @__PURE__ */ ((SearchMode2) => {
@@ -2550,6 +2594,7 @@ export {
   capitalizeWords,
   checkArrEquality,
   chunk,
+  clamp,
   cleanObject,
   clone,
   cn,
@@ -2585,12 +2630,14 @@ export {
   endOf,
   endsWith,
   entries,
+  entriesToOptions,
   eqIgnoreCase,
   extractBase64FromDataUrl,
   fadeIn,
   fetchAndDownload,
   fileToArrayBuffer,
   filterObject,
+  findLabel,
   first,
   firstSeveral,
   flatten,
@@ -2604,6 +2651,7 @@ export {
   formatFileSize,
   formatIfIsoDate,
   formatIsoDate,
+  formatNumber,
   formatRelativeTime,
   fromPairs,
   generateOrderedDateText,
@@ -2617,6 +2665,7 @@ export {
   getFileExtension,
   getImageUrl,
   getInitials,
+  getRowNumber,
   getServerCookie,
   groupBy,
   has,
@@ -2713,6 +2762,8 @@ export {
   toISOString,
   toKebabCase,
   toLocaleUpper,
+  toNumberOrUndef,
+  toOptions,
   toPascalCase,
   toSnakeCase,
   toStr,
