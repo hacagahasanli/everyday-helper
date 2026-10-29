@@ -1110,6 +1110,66 @@ await fetchAndDownload(imageUrl, 'photo.png', { onError: () => notify('Download 
 
 ---
 
+### Option Utils
+
+Helpers for select/dropdown options.
+
+```tsx
+import { entriesToOptions, toOptions, findLabel } from 'everyday-helper/utils';
+
+entriesToOptions({ ACTIVE: 'Aktiv', CLOSED: 'Bağlı' });
+// [{ value: 'ACTIVE', label: 'Aktiv' }, { value: 'CLOSED', label: 'Bağlı' }]
+
+toOptions(cities, { labelKey: 'name', valueKey: 'id' });
+// [{ label: 'Bakı', value: '1' }, ...]
+
+findLabel(options, 'ACTIVE'); // 'Aktiv'
+findLabel(dictionary, 5, { valueKey: 'id', labelKey: 'value' }); // 'Bakı'
+```
+
+**Available functions:**
+
+- `entriesToOptions(map, getExtra?)` - `{ value: label }` map to options, optional extra fields
+- `toOptions(items, { labelKey, valueKey })` - Objects to options (label/value stringified)
+- `findLabel(list, value, { valueKey, labelKey, fallback })` - Label lookup, values compared as strings
+
+---
+
+### Number Utils
+
+```tsx
+import { clamp, formatNumber, toNumberOrUndef } from 'everyday-helper/utils';
+
+clamp(15, 0, 10); // 10
+formatNumber(1234567.5); // '1.234.567,5' (az-AZ)
+formatNumber(12842, { locale: 'en-US' }); // '12,842'
+toNumberOrUndef('42'); // 42
+toNumberOrUndef('abc'); // undefined
+```
+
+**Available functions:**
+
+- `clamp(value, min, max)` - Restrict a number to a range (`min` wins when `min > max`)
+- `formatNumber(value, { locale, ...Intl.NumberFormatOptions })` - Locale-aware formatting (default `az-AZ`)
+- `toNumberOrUndef(value)` - Number or `undefined` for empty / non-numeric input
+
+---
+
+### Pagination Utils
+
+```tsx
+import { getRowNumber } from 'everyday-helper/utils';
+
+getRowNumber({ index: 0, page: 2, size: 10 }); // 11
+getRowNumber({ index: 0, page: 2, size: 10, totalCount: 23 }); // 13 (descending)
+```
+
+**Available functions:**
+
+- `getRowNumber({ index, page, size, totalCount, defaultSize })` - Table row number on a paginated list (pages start at 1)
+
+---
+
 ### API Utils
 
 API and HTTP-related utilities.

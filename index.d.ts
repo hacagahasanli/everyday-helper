@@ -1146,6 +1146,107 @@ declare function clone<T>(arr: T[]): T[];
  */
 declare function sortBy<T>(arr: T[], keyOrFn: keyof T | ((item: T) => number | string), order?: "asc" | "desc"): T[];
 
+interface SelectOption {
+    label: string;
+    value: string;
+}
+/**
+ * Converts a `{ value: label }` map (e.g. an enum label map) into select options.
+ *
+ * @param map - Object whose keys become values and whose values become labels
+ * @param getExtra - Optional extra fields merged into each option
+ * @returns Options in the map's key order
+ *
+ * @example
+ * entriesToOptions({ ACTIVE: 'Aktiv', CLOSED: 'Bağlı' });
+ * // [{ value: 'ACTIVE', label: 'Aktiv' }, { value: 'CLOSED', label: 'Bağlı' }]
+ *
+ * entriesToOptions({ FINE: 'Cərimə' }, (value) => ({ disabled: value === 'FINE' }));
+ * // [{ value: 'FINE', label: 'Cərimə', disabled: true }]
+ */
+declare const entriesToOptions: <E extends object = object>(map: Record<string, string>, getExtra?: (value: string, label: string) => E) => Array<SelectOption & E>;
+interface ToOptionsKeys<T> {
+    labelKey: keyof T;
+    valueKey: keyof T;
+}
+/**
+ * Converts a list of objects into select options. Label and value are stringified.
+ *
+ * @param items - Source objects
+ * @param keys - `labelKey` and `valueKey` to read from each object
+ * @returns Options in the list order
+ *
+ * @example
+ * toOptions([{ id: 1, name: 'Bakı' }], { labelKey: 'name', valueKey: 'id' });
+ * // [{ label: 'Bakı', value: '1' }]
+ */
+declare const toOptions: <T extends object>(items: T[], { labelKey, valueKey }: ToOptionsKeys<T>) => SelectOption[];
+interface FindLabelOptions<T> {
+    valueKey?: keyof T;
+    labelKey?: keyof T;
+    fallback?: string | null;
+}
+/**
+ * Finds an item by a key and returns its label. Values are compared as strings,
+ * so `5` matches `'5'`.
+ *
+ * @param list - Items to search (options, dictionary entries, ...)
+ * @param value - Value to look up
+ * @param options - `valueKey` (default: "value"), `labelKey` (default: "label") and
+ *   `fallback` returned when nothing matches (default: null)
+ * @returns Label, `null` for a `null`/`undefined` value, or the fallback
+ *
+ * @example
+ * findLabel(options, 'ACTIVE'); // 'Aktiv'
+ * findLabel(dictionary, 5, { valueKey: 'id', labelKey: 'value' }); // 'Bakı'
+ * findLabel(options, 'UNKNOWN', { fallback: 'UNKNOWN' }); // 'UNKNOWN'
+ */
+declare const findLabel: <T extends object>(list: T[] | null | undefined, value: unknown, { valueKey, labelKey, fallback, }?: FindLabelOptions<T>) => string | null;
+
+/**
+ * Restricts a number to the `[min, max]` range. When `min` is greater than `max`
+ * (e.g. an index into an empty list), `min` wins.
+ *
+ * @param value - Number to restrict
+ * @param min - Lower bound
+ * @param max - Upper bound
+ * @returns Clamped number
+ *
+ * @example
+ * clamp(15, 0, 10); // 10
+ * clamp(index, 0, items.length - 1); // safe list index
+ */
+declare const clamp: (value: number, min: number, max: number) => number;
+interface FormatNumberOptions extends Intl.NumberFormatOptions {
+    locale?: string;
+}
+/**
+ * Formats a number with locale-aware grouping and decimal separators.
+ *
+ * @param value - Number to format
+ * @param options - `locale` (default: "az-AZ") plus any `Intl.NumberFormat` option
+ * @returns Formatted number
+ *
+ * @example
+ * formatNumber(1234567.5); // '1.234.567,5'
+ * formatNumber(12.5, { minimumFractionDigits: 2 }); // '12,50'
+ * formatNumber(12842, { locale: 'en-US' }); // '12,842'
+ */
+declare const formatNumber: (value: number, { locale, ...options }?: FormatNumberOptions) => string;
+/**
+ * Converts a value to a number, returning `undefined` instead of `NaN`
+ * for empty or non-numeric input. Useful for form and query values.
+ *
+ * @param value - String or number
+ * @returns Number, or undefined for `null`, `undefined`, blank or non-numeric values
+ *
+ * @example
+ * toNumberOrUndef('42'); // 42
+ * toNumberOrUndef(''); // undefined
+ * toNumberOrUndef('abc'); // undefined
+ */
+declare const toNumberOrUndef: (value?: string | number | null) => number | undefined;
+
 /**
  * Checks if a value is null or undefined.
  * @param v - Value to check
@@ -1935,7 +2036,30 @@ declare const bounceIn: (order?: number, className?: string, style?: CSSProperti
     style: CSSProperties;
 };
 
+interface GetRowNumberParams {
+    index: number;
+    page?: number;
+    size?: number;
+    totalCount?: number;
+    defaultSize?: number;
+}
+/**
+ * Returns the display number of a table row on a paginated list (pages start at 1).
+ * With `totalCount`, rows are numbered in descending order (newest = highest number);
+ * without it, they are numbered ascending from 1.
+ * A missing/invalid `page` falls back to 1, a missing/invalid `size` to `defaultSize`.
+ *
+ * @param params - Row `index` on the current page, `page`, `size`, optional `totalCount`
+ *   and `defaultSize` (default: 10)
+ * @returns Row number
+ *
+ * @example
+ * getRowNumber({ index: 0, page: 2, size: 10 }); // 11
+ * getRowNumber({ index: 0, page: 2, size: 10, totalCount: 23 }); // 13
+ */
+declare const getRowNumber: ({ index, page, size, totalCount, defaultSize, }: GetRowNumberParams) => number;
+
 declare const AZ_MONTHS: readonly ["Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun", "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"];
 declare const AZ_MONTHS_SHORT: readonly ["Yan", "Fev", "Mar", "Apr", "May", "İyn", "İyl", "Avq", "Sen", "Okt", "Noy", "Dek"];
 
-export { AZ_MONTHS, AZ_MONTHS_SHORT, type BoolLabels, type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DateLike, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, type DisabledOutsideRangeParams, type DisabledTimeConfig, type FetchAndDownloadOptions, FormDataBuilder, type FormatFileSizeOptions, type FormatLang, type GenerateOrderedDateTextModel, type GetFileExtensionOptions, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, type UseListPaginationOptions, type UseListPaginationResult, type UseUrlPaginationOptions, type UseUrlPaginationResult, ablativeSuffix, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, boolLabel, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, cleanObject, clone, cn, combineDateAndTime, compactArr, compactStr, compareDates, compose, computeAnchor, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, dativeSuffix, debounce, deepClone, deepFreeze, deepMerge, delay, difference, disabledBeforeDay, disabledOnOrBeforeDay, disabledOutsideRange, downloadBlob, downloadUrl, endOf, endsWith, entries, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fetchAndDownload, fileToArrayBuffer, filterObject, first, firstSeveral, flatten, flattenDeep, flip, formatAzDate, formatAzDateShort, formatAzDateTime, formatDate, formatDateRange, formatFileSize, formatIfIsoDate, formatIsoDate, formatRelativeTime, fromPairs, generateOrderedDateText, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getDisabledPastTime, getEndpoint, getFileExtension, getImageUrl, getInitials, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isAfterToday, isBeforeToday, isBetweenDates, isBrowser, isDocumentAvailable, isEmpty, isEqual, isFuture, isIsoDateString, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, prettifySnakeCase, pushIf, rateLimit, reformatDate, reject, removeServerCookie, repeat, retry, reverse, reverseArr, safeCall, safeDocument, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toDataUrl, toDative, toISOString, toKebabCase, toLocaleUpper, toPascalCase, toSnakeCase, toStr, toStrOrUndef, toStrWithFallback, toStrWithSuffix, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useListPagination, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useUrlPagination, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
+export { AZ_MONTHS, AZ_MONTHS_SHORT, type BoolLabels, type ClassValue, type ComputeAnchorParams, CookieManager, DEFAULT_AUTH_COOKIE_MAX_AGE, DEFAULT_AUTH_COOKIE_OPTIONS, DateFormats, type DateInput, type DateLike, type DaysFormatOrder, type DaysToYMDDaysOptionsModel, type DaysToYMDOutputModel, type DaysToYMDParams, type DisabledOutsideRangeParams, type DisabledTimeConfig, type FetchAndDownloadOptions, type FindLabelOptions, FormDataBuilder, type FormatFileSizeOptions, type FormatLang, type FormatNumberOptions, type GenerateOrderedDateTextModel, type GetFileExtensionOptions, type GetRowNumberParams, type PluralLabel, type PrintStyle, SearchMode, type SearchableOption, type SelectOption, type ServerCookieOptions, type ServerCookieStore, type ThrottleOptions, type ThrottledFunction, type ToOptionsKeys, type UseListPaginationOptions, type UseListPaginationResult, type UseUrlPaginationOptions, type UseUrlPaginationResult, ablativeSuffix, addAsteriskIf, addToDate, advancedSearch, animate, areAllValuesComplete, average, boolLabel, bounceIn, capitalize, capitalizeWords, checkArrEquality, chunk, clamp, cleanObject, clone, cn, combineDateAndTime, compactArr, compactStr, compareDates, compose, computeAnchor, concatIf, constant, convertBase64ToFile, convertFileToBase64, count, countOccurrences, createAuthCookieOptions, createFormData, createServerCookieManager, createStorage, curry, dativeSuffix, debounce, deepClone, deepFreeze, deepMerge, delay, difference, disabledBeforeDay, disabledOnOrBeforeDay, disabledOutsideRange, downloadBlob, downloadUrl, endOf, endsWith, entries, entriesToOptions, eqIgnoreCase, extractBase64FromDataUrl, fadeIn, fetchAndDownload, fileToArrayBuffer, filterObject, findLabel, first, firstSeveral, flatten, flattenDeep, flip, formatAzDate, formatAzDateShort, formatAzDateTime, formatDate, formatDateRange, formatFileSize, formatIfIsoDate, formatIsoDate, formatNumber, formatRelativeTime, fromPairs, generateOrderedDateText, generateQuery, get, getAge, getDateDifference, getDaysDiffAsText, getDisabledPastTime, getEndpoint, getFileExtension, getImageUrl, getInitials, getRowNumber, getServerCookie, groupBy, has, hasAzerbaijanCountryCode, identity, includesIgnoreCase, intersection, invert, isAfterToday, isBeforeToday, isBetweenDates, isBrowser, isDocumentAvailable, isEmpty, isEqual, isFuture, isIsoDateString, isLoggedIn, isLoggedInFromCookieHeader, isNotEmpty, isNulOrUndefined, isObject, isPast, isSameDay, isString, isStringSimilar, isToday, isTomorrow, isValidDate, isYesterday, keys, last, lastSeveral, lazyLoad, levenshteinDistance, local, mapKeys, mapValues, max, memoize, merge, min, negate, noop, normalizeAzText, normalizePhone, normalizeWhitespace, now, omit, once, padEnd, padStart, parseCookieHeader, parseDate, partial, partition, pick, prettifySnakeCase, pushIf, rateLimit, reformatDate, reject, removeServerCookie, repeat, retry, reverse, reverseArr, safeCall, safeDocument, safeWindow, sample, sampleSize, scaleIn, serializeCookie, session, set, shuffle, slideInDown, slideInLeft, slideInRight, slideInUp, slugify, sortBy, startOf, startsWith, subtractFromDate, sum, throttle, timeId, tinyId, toCamelCase, toDataUrl, toDative, toISOString, toKebabCase, toLocaleUpper, toNumberOrUndef, toOptions, toPascalCase, toSnakeCase, toStr, toStrOrUndef, toStrWithFallback, toStrWithSuffix, toUnixTimestamp, toUpperSnakeCase, trim, trimEnd, trimStart, truncate, tryCatch, tryCatchAsync, unflatten, union, unique, uniqueBy, useDebounce, useDownloadFile, useEscapeKey, useEventListener, useInterval, useListPagination, useMediaQuery, useMount, useOnlineStatus, useOutsideClick, usePortal, usePrevious, usePrint, useResizeListener, useScrollLock, useScrollThreshold, useThrottle, useThrottleCallback, useToggle, useUnmount, useUpdateEffect, useUrlPagination, useWindowSize, values, withAzerbaijanCountryCode, without, zip };
