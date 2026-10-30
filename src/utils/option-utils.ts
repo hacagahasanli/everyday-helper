@@ -42,7 +42,7 @@ export interface ToOptionsKeys<T> {
  * // [{ label: 'Bakı', value: '1' }]
  */
 export const toOptions = <T extends object>(
-  items: T[],
+  items: readonly T[],
   { labelKey, valueKey }: ToOptionsKeys<T>,
 ): SelectOption[] =>
   items.map((item) => ({
@@ -72,7 +72,7 @@ export interface FindLabelOptions<T> {
  * findLabel(options, 'UNKNOWN', { fallback: 'UNKNOWN' }); // 'UNKNOWN'
  */
 export const findLabel = <T extends object>(
-  list: T[] | null | undefined,
+  list: readonly T[] | null | undefined,
   value: unknown,
   {
     valueKey = 'value' as keyof T,
