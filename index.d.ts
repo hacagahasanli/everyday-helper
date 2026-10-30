@@ -1206,7 +1206,7 @@ interface ToOptionsKeys<T> {
  * toOptions([{ id: 1, name: 'Bakı' }], { labelKey: 'name', valueKey: 'id' });
  * // [{ label: 'Bakı', value: '1' }]
  */
-declare const toOptions: <T extends object>(items: T[], { labelKey, valueKey }: ToOptionsKeys<T>) => SelectOption[];
+declare const toOptions: <T extends object>(items: readonly T[], { labelKey, valueKey }: ToOptionsKeys<T>) => SelectOption[];
 interface FindLabelOptions<T> {
     valueKey?: keyof T;
     labelKey?: keyof T;
@@ -1227,7 +1227,7 @@ interface FindLabelOptions<T> {
  * findLabel(dictionary, 5, { valueKey: 'id', labelKey: 'value' }); // 'Bakı'
  * findLabel(options, 'UNKNOWN', { fallback: 'UNKNOWN' }); // 'UNKNOWN'
  */
-declare const findLabel: <T extends object>(list: T[] | null | undefined, value: unknown, { valueKey, labelKey, fallback, }?: FindLabelOptions<T>) => string | null;
+declare const findLabel: <T extends object>(list: readonly T[] | null | undefined, value: unknown, { valueKey, labelKey, fallback, }?: FindLabelOptions<T>) => string | null;
 
 /**
  * Restricts a number to the `[min, max]` range. When `min` is greater than `max`

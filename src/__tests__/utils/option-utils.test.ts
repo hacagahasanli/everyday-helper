@@ -38,6 +38,14 @@ describe('toOptions', () => {
       { label: 'Gəncə', value: '2' },
     ]);
   });
+
+  it('accepts a readonly (as const) list', () => {
+    const cities = [{ id: 1, name: 'Bakı' }] as const;
+
+    expect(toOptions(cities, { labelKey: 'name', valueKey: 'id' })).toEqual([
+      { label: 'Bakı', value: '1' },
+    ]);
+  });
 });
 
 describe('findLabel', () => {
@@ -70,6 +78,15 @@ describe('findLabel', () => {
   it('returns the fallback when nothing matches', () => {
     expect(findLabel(options, 'UNKNOWN', { fallback: 'UNKNOWN' })).toBe('UNKNOWN');
     expect(findLabel(null, 'ACTIVE', { fallback: '-' })).toBe('-');
+  });
+
+  it('accepts a readonly (as const) list', () => {
+    const genders = [
+      { value: 'MALE', label: 'Kişi' },
+      { value: 'FEMALE', label: 'Qadın' },
+    ] as const;
+
+    expect(findLabel(genders, 'FEMALE')).toBe('Qadın');
   });
 
   it.each([null, undefined])('returns null for a %s value', (value) => {
